@@ -4,7 +4,8 @@
   "description": "Firebase helper classes to use firebase with typescript",
   "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "tsc -w",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

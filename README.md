@@ -22,7 +22,7 @@ the Firestore Database. It makes creating, reading and maintaining Firestore Doc
 ### firebase-admin-helpers
 ```ts
 import * as admin from "firebase-admin"
-import { DocumentClass, DocumentClassDefineProps, DocumentMap, DocumentMapDefineProps } from "@janwuesten/firebase-admin-helpers"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-admin-helpers"
 
 export class Account extends DocumentClass {
     username: string = ""
@@ -47,7 +47,7 @@ export class Account extends DocumentClass {
 import { firestore } from "@/firestore"
 
 import { collection } from "firebase/firestore"
-import { DocumentClass, DocumentClassDefineProps, DocumentMap, DocumentMapDefineProps } from "@janwuesten/firebase-helpers"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-helpers"
 
 export class Account extends DocumentClass {
     username: string = ""

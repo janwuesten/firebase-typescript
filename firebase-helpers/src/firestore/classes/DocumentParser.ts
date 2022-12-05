@@ -1,10 +1,7 @@
-import { addDoc, CollectionReference, deleteDoc, doc, getDoc, setDoc, Timestamp, updateDoc } from "firebase/firestore"
+import { Timestamp } from "firebase/firestore"
+import { DocumentMap } from "./DocumentMap"
+import { DocumentData, FieldType } from "../types/DocumentTypes"
 
-export type FieldType = "string" | "number" | "boolean" | "map" | "array" | "mapArray" | "timestamp" | "geopoint"
-export type DocumentData = Record<string, unknown>
-
-export type DocumentDefine = (field: string, type: FieldType) => DocumentParserDefinition
-export type CollectionDefine = (collection: () => CollectionReference) => void
 export class DocumentParserDefinition {
     private __field: string
     private __remoteField: string
@@ -136,95 +133,5 @@ export abstract class DocumentParser {
             }
         }
         return data
-    }
-}
-export interface DocumentMapDefineProps {
-    define: DocumentDefine
-}
-export abstract class DocumentMap extends DocumentParser {
-    constructor() {
-        super()
-        this.definition({
-            define: (propName, propType) => {
-                const _definition = new DocumentParserDefinition(propName, propType)
-                this._definitions.push(_definition)
-                return _definition
-            }
-        })
-    }
-    abstract definition({ define }: DocumentMapDefineProps): void
-}
-export interface DocumentClassDefineProps {
-    define: DocumentDefine
-    defineCollection: CollectionDefine
-}
-export abstract class DocumentClass extends DocumentParser {
-    protected _id: string
-    private _collectionDefinition: (() => CollectionReference) | null = null
-
-    constructor(id: string = "") {
-        super()
-        this._id = id
-        this.definition({
-            define: (propName, propType) => {
-                const _definition = new DocumentParserDefinition(propName, propType)
-                this._definitions.push(_definition)
-                return _definition
-            },
-            defineCollection: (collection) => {
-                this._collectionDefinition = collection
-            }
-        })
-    }
-    abstract definition({ define, defineCollection }: DocumentClassDefineProps): void
-
-    async update() {
-        if (this._id) {
-            await updateDoc(this.ref, await this.toData() as Partial<unknown>)
-        } else {
-            throw new Error("called update without id")
-        }
-    }
-    async set() {
-        if (this._id) {
-            await setDoc(this.ref, await this.toData(), { merge: true })
-        } else {
-            const addedDoc = await addDoc(this.collectionRef, await this.toData())
-            this._id = addedDoc.id
-        }
-    }
-    async add() {
-        if (this._id) {
-            throw new Error("called add with id")
-        } else {
-            const addedDoc = await addDoc(this.collectionRef, await this.toData())
-            this._id = addedDoc.id
-        }
-    }
-    async delete() {
-        if (this._id) {
-            deleteDoc(this.ref)
-        }
-    }
-    async get() {
-        const doc = await getDoc(this.ref)
-        if (!doc.exists) {
-            return false
-        }
-        await this.fromData(doc.data()!)
-        return true
-    }
-
-    get id() {
-        return this._id
-    }
-    get ref() {
-        return doc(this.collectionRef, this._id)
-    }
-    get collectionRef(): CollectionReference {
-        if (!this._collectionDefinition) {
-            throw new Error("collection not defined. Define with defineCollection()")
-        }
-        return this._collectionDefinition()
     }
 }
