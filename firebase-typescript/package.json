@@ -1,5 +1,5 @@
 {
-  "name": "@janwuesten/firebase-admin-helpers",
+  "name": "@janwuesten/firebase-typescript",
   "version": "0.1.0",
   "description": "Firebase helper classes to use firebase with typescript",
   "main": "lib/index.js",
@@ -9,22 +9,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/janwuesten/firebase-helpers.git"
+    "url": "git+https://github.com/janwuesten/firebase-typescript.git"
   },
   "keywords": [
     "firebase",
-    "firebase-admin",
     "typescript",
     "helper"
   ],
   "author": "Jan Wüsten",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/janwuesten/firebase-helpers/issues"
+    "url": "https://github.com/janwuesten/firebase-typescript/issues"
   },
-  "homepage": "https://github.com/janwuesten/firebase-helpers#readme",
+  "homepage": "https://github.com/janwuesten/firebase-typescript#readme",
   "devDependencies": {
-    "firebase-admin": "^11.3.0",
+    "firebase": "^9.14.0",
     "typescript": "^4.9.3"
   }
 }
