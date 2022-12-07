@@ -13,10 +13,10 @@ the Firestore Database. It makes creating, reading and maintaining Firestore Doc
 ## Installation
 
 ### Installation for Admin SDK (Functions, backend etc.)
-`npm install @janwuesten/firebase-admin-typescript`
+`npm install firebase-admin @janwuesten/firebase-admin-typescript`
 
 ### Installation for Web SDK (requires Web version 9)
-`npm install @janwuesten/firebase-typescript`
+`npm install firebase @janwuesten/firebase-typescript`
 
 ## Basic usage example
 ### Admin SDK
@@ -102,4 +102,4 @@ const account = new Account("document id")
 await account.delete()
 ```
 
-> For more information on how to use the Firebase helper visit the GitHub Wiki page
+> For more information on how to use the Firebase helper visit the [GitHub Wiki page here](https://github.com/janwuesten/firebase-typescript/wiki).
