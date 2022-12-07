@@ -8,7 +8,7 @@ export class DocumentParserDefinition {
     private __type: FieldType
     private __defaultValue: unknown = null
     private __defineMap: ((data: DocumentData) => DocumentMap) | null = null
-    private __write: boolean = true
+    private __readonly: boolean = false
 
     get _field() {
         return this.__field
@@ -25,8 +25,8 @@ export class DocumentParserDefinition {
     get _defineMap() {
         return this.__defineMap
     }
-    get _write() {
-        return this.__write
+    get _readonly() {
+        return this.__readonly
     }
 
     constructor(prop: string, fieldType: FieldType) {
@@ -47,8 +47,8 @@ export class DocumentParserDefinition {
         this.__defineMap = definer
         return this
     }
-    write(canWrite: boolean) {
-        this.__write = canWrite
+    readonly() {
+        this.__readonly = true
         return this
     }
 }
@@ -114,7 +114,7 @@ export abstract class DocumentParser {
         const data: DocumentData = {}
         const _self = this as any
         for (const _definition of this._definitions) {
-            if (_definition._write) {
+            if (!_definition._readonly) {
                 if (_self[_definition._field] == undefined || _self[_definition._field] == null) {
                     data[_definition._remoteField] = null
                 } else {

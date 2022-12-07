@@ -31,6 +31,14 @@ jobs:
         working-directory: ${{matrix.package_dir}}
         run: npm run build
         
+      - name: Copy README
+        working-directory: ${{matrix.package_dir}}
+        run: cp ../README.md README.md
+
+      - name: Copy LICENSE
+        working-directory: ${{matrix.package_dir}}
+        run: cp ../LICENSE LICENSE
+
       - name: Publish Node.js package
         working-directory: ${{matrix.package_dir}}
         run: npm publish --access=public
