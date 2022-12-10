@@ -1,4 +1,4 @@
-import { addDoc, CollectionReference, deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore"
+import { addDoc, CollectionReference, deleteDoc, doc, getDoc, setDoc, SetOptions, updateDoc } from "firebase/firestore"
 import { DocumentParser, DocumentParserDefinition } from "./DocumentParser"
 import { CollectionDefine, DocumentDefine } from "../types/DefineTypes"
 
@@ -33,9 +33,9 @@ export abstract class DocumentClass extends DocumentParser {
             throw new Error("called update without id")
         }
     }
-    async set() {
+    async set(options: SetOptions = { merge: true }) {
         if (this._id) {
-            await setDoc(this.ref, await this.toData(), { merge: true })
+            await setDoc(this.ref, await this.toData(), options)
         } else {
             const addedDoc = await addDoc(this.collectionRef, await this.toData())
             this._id = addedDoc.id

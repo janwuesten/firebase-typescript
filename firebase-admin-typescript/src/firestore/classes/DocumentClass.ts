@@ -33,9 +33,9 @@ export abstract class DocumentClass extends DocumentParser {
             throw new Error("called update without id")
         }
     }
-    async set() {
+    async set(options: admin.firestore.SetOptions = { merge: true }) {
         if (this._id) {
-            await this.ref.set(await this.toData(), { merge: true })
+            await this.ref.set(await this.toData(), options)
         } else {
             const addedDoc = await this.collectionRef.add(await this.toData())
             this._id = addedDoc.id
