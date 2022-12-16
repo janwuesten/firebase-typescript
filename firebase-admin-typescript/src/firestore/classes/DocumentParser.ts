@@ -59,24 +59,24 @@ export abstract class DocumentParser {
         
     }
 
-    async toDocumentMapArray(array: DocumentMap[]): Promise<DocumentData[]> {
+    toDocumentMapArray(array: DocumentMap[]): DocumentData[] {
         const items: DocumentData[] = []
         for (const item of array) {
-            items.push(await item.toData())
+            items.push(item.toData())
         }
         return items
     }
-    async fromDocumentMapArray<T extends DocumentMap>(data: DocumentData[], generator: (data: DocumentData) => T): Promise<T[]> {
+    fromDocumentMapArray<T extends DocumentMap>(data: DocumentData[], generator: (data: DocumentData) => T): T[] {
         const items: T[] = []
         if (data) {
             for (const item of data) {
-                items.push(await generator(item).fromData(item))
+                items.push(generator(item).fromData(item))
             }
         }
         return items
     }
 
-    async fromData(data: DocumentData) {
+    fromData(data: DocumentData) {
         const _self = this as any
         for (const _definition of this._definitions) {
             if (!(_definition._remoteField in data)) {
@@ -94,13 +94,13 @@ export abstract class DocumentParser {
                         if (!_definition._defineMap) {
                             throw new Error(`map definition for field ${_definition._field} missing. Define with .defineMap()`)
                         }
-                        _self[_definition._field] = await _definition._defineMap(data[_definition._remoteField] as DocumentData).fromData(data[_definition._remoteField] as DocumentData)
+                        _self[_definition._field] = _definition._defineMap(data[_definition._remoteField] as DocumentData).fromData(data[_definition._remoteField] as DocumentData)
                         break
                     case "mapArray":
                         if (!_definition._defineMap) {
                             throw new Error(`map definition for field ${_definition._field} missing. Define with .defineMap()`)
                         }
-                        _self[_definition._field] = await this.fromDocumentMapArray(data[_definition._remoteField] as DocumentData[], _definition._defineMap!)
+                        _self[_definition._field] = this.fromDocumentMapArray(data[_definition._remoteField] as DocumentData[], _definition._defineMap!)
                         break
                     default:
                         _self[_definition._field] = data[_definition._remoteField]
@@ -110,7 +110,7 @@ export abstract class DocumentParser {
         }
         return this
     }
-    async toData(): Promise<DocumentData> {
+    toData(): DocumentData {
         const data: DocumentData = {}
         const _self = this as any
         for (const _definition of this._definitions) {
@@ -120,10 +120,10 @@ export abstract class DocumentParser {
                 } else {
                     switch (_definition._type) {
                         case "map":
-                            data[_definition._remoteField] = await (_self[_definition._field] as DocumentMap).toData()
+                            data[_definition._remoteField] = (_self[_definition._field] as DocumentMap).toData()
                             break
                         case "mapArray":
-                            data[_definition._remoteField] = await this.toDocumentMapArray(_self[_definition._field])
+                            data[_definition._remoteField] = this.toDocumentMapArray(_self[_definition._field])
                             break
                         default:
                             data[_definition._remoteField] = _self[_definition._field]

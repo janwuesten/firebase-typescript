@@ -28,16 +28,16 @@ export abstract class DocumentClass extends DocumentParser {
 
     async update() {
         if (this._id) {
-            await this.ref.update(await this.toData())
+            await this.ref.update(this.toData())
         } else {
             throw new Error("called update without id")
         }
     }
     async set(options: admin.firestore.SetOptions = { merge: true }) {
         if (this._id) {
-            await this.ref.set(await this.toData(), options)
+            await this.ref.set(this.toData(), options)
         } else {
-            const addedDoc = await this.collectionRef.add(await this.toData())
+            const addedDoc = await this.collectionRef.add(this.toData())
             this._id = addedDoc.id
         }
     }
@@ -45,7 +45,7 @@ export abstract class DocumentClass extends DocumentParser {
         if (this._id) {
             throw new Error("called add with id")
         } else {
-            const addedDoc = await this.collectionRef.add(await this.toData())
+            const addedDoc = await this.collectionRef.add(this.toData())
             this._id = addedDoc.id
         }
     }
@@ -59,7 +59,7 @@ export abstract class DocumentClass extends DocumentParser {
         if (!doc.exists) {
             return false
         }
-        await this.fromData(doc.data()!)
+        this.fromData(doc.data()!)
         return true
     }
 

@@ -28,16 +28,16 @@ export abstract class DocumentClass extends DocumentParser {
 
     async update() {
         if (this._id) {
-            await updateDoc(this.ref, await this.toData() as Partial<unknown>)
+            await updateDoc(this.ref, this.toData() as Partial<unknown>)
         } else {
             throw new Error("called update without id")
         }
     }
     async set(options: SetOptions = { merge: true }) {
         if (this._id) {
-            await setDoc(this.ref, await this.toData(), options)
+            await setDoc(this.ref, this.toData(), options)
         } else {
-            const addedDoc = await addDoc(this.collectionRef, await this.toData())
+            const addedDoc = await addDoc(this.collectionRef, this.toData())
             this._id = addedDoc.id
         }
     }
@@ -45,13 +45,13 @@ export abstract class DocumentClass extends DocumentParser {
         if (this._id) {
             throw new Error("called add with id")
         } else {
-            const addedDoc = await addDoc(this.collectionRef, await this.toData())
+            const addedDoc = await addDoc(this.collectionRef, this.toData())
             this._id = addedDoc.id
         }
     }
     async delete() {
         if (this._id) {
-            deleteDoc(this.ref)
+            await deleteDoc(this.ref)
         }
     }
     async get() {
@@ -59,7 +59,7 @@ export abstract class DocumentClass extends DocumentParser {
         if (!doc.exists) {
             return false
         }
-        await this.fromData(doc.data()!)
+        this.fromData(doc.data()!)
         return true
     }
 

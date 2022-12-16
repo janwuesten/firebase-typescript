@@ -36,17 +36,17 @@ export class DocumentBatch {
         this._lastBatchActions++
         return this._lastBatch
     }
-    async set(document: DocumentClass) {
-        const batch = await this._getBatch()
-        batch.set(document.ref, await document.toData())
+    set(document: DocumentClass) {
+        const batch = this._getBatch()
+        batch.set(document.ref, document.toData())
     }
-    async delete(document: DocumentClass) {
-        const batch = await this._getBatch()
+    delete(document: DocumentClass) {
+        const batch = this._getBatch()
         batch.delete(document.ref)
     }
-    async update(document: DocumentClass) {
-        const batch = await this._getBatch()
-        batch.update(document.ref, await document.toData() as Partial<unknown>)
+    update(document: DocumentClass) {
+        const batch = this._getBatch()
+        batch.update(document.ref, document.toData() as Partial<unknown>)
     }
     async commit() {
         this._transactions.push(this._lastBatch.commit())
