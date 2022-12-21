@@ -1,10 +1,11 @@
 import type * as admin from "firebase-admin"
-import { DocumentParser, DocumentParserDefinition } from "./DocumentParser"
-import { CollectionDefine, DocumentDefine } from "../types/DefineTypes"
+import { DocumentParser, DocumentParserDefinition, DocumentParserListener } from "./DocumentParser"
+import { CollectionDefine, DocumentDefine, EventDefine } from "../types/DefineTypes"
 
 export interface DocumentClassDefineProps {
     define: DocumentDefine
     defineCollection: CollectionDefine
+    event: EventDefine
 }
 export abstract class DocumentClass extends DocumentParser {
     protected _id: string
@@ -21,6 +22,15 @@ export abstract class DocumentClass extends DocumentParser {
             },
             defineCollection: (collection) => {
                 this._collectionDefinition = collection
+            },
+            event: (event, listener) => {
+                switch (event) {
+                    case "beforeWrite":
+                        this._listeners.push(new DocumentParserListener(event, listener))
+                        break
+                    default:
+                        throw new Error(`invalid_listener: ${event}`)
+                }
             }
         })
     }

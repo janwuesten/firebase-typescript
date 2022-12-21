@@ -1,7 +1,17 @@
 import type * as admin from "firebase-admin"
 import { DocumentMap } from "./DocumentMap"
 import { DocumentData, FieldType } from "../types/DocumentTypes"
+import { EventDefineCallback } from "../types/DefineTypes"
 
+export class DocumentParserListener {
+    event: string
+    listener: EventDefineCallback
+
+    constructor(event: string, listener: EventDefineCallback) {
+        this.event = event
+        this.listener = listener
+    }
+}
 export class DocumentParserDefinition {
     private __field: string
     private __remoteField: string
@@ -54,6 +64,7 @@ export class DocumentParserDefinition {
 }
 export abstract class DocumentParser {
     protected _definitions: DocumentParserDefinition[] = []
+    protected _listeners: DocumentParserListener[] = []
 
     constructor() {
         
@@ -78,6 +89,11 @@ export abstract class DocumentParser {
 
     fromData(data: DocumentData) {
         const _self = this as any
+        for (const listener of this._listeners) {
+            if (listener.event == "beforeRead") {
+                listener.listener()
+            }
+        }
         for (const _definition of this._definitions) {
             if (data[_definition._remoteField] == null) {
                 _self[_definition._field] = _definition._defaultValue
@@ -104,11 +120,21 @@ export abstract class DocumentParser {
                 }
             }
         }
+        for (const listener of this._listeners) {
+            if (listener.event == "afterRead") {
+                listener.listener()
+            }
+        }
         return this
     }
     toData(): DocumentData {
         const data: DocumentData = {}
         const _self = this as any
+        for (const listener of this._listeners) {
+            if (listener.event == "beforeWrite") {
+                listener.listener()
+            }
+        }
         for (const _definition of this._definitions) {
             if (!_definition._readonly) {
                 if (_self[_definition._field] == undefined || _self[_definition._field] == null) {
@@ -126,6 +152,11 @@ export abstract class DocumentParser {
                             break
                     }
                 }
+            }
+        }
+        for (const listener of this._listeners) {
+            if (listener.event == "afterWrite") {
+                listener.listener()
             }
         }
         return data
