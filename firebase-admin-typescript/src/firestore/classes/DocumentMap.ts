@@ -3,7 +3,7 @@ import { DocumentDefine, EventDefine } from "../types/DefineTypes"
 
 export interface DocumentMapDefineProps {
     define: DocumentDefine
-    event: EventDefine
+    defineEvent: EventDefine
 }
 export abstract class DocumentMap extends DocumentParser {
     constructor() {
@@ -14,7 +14,7 @@ export abstract class DocumentMap extends DocumentParser {
                 this._definitions.push(_definition)
                 return _definition
             },
-            event: (event, listener) => {
+            defineEvent: (event, listener) => {
                 switch (event) {
                     case "beforeWrite":
                         this._listeners.push(new DocumentParserListener(event, listener))

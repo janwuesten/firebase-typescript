@@ -5,7 +5,7 @@ import { CollectionDefine, DocumentDefine, EventDefine } from "../types/DefineTy
 export interface DocumentClassDefineProps {
     define: DocumentDefine
     defineCollection: CollectionDefine
-    event: EventDefine
+    defineEvent: EventDefine
 }
 export abstract class DocumentClass extends DocumentParser {
     protected _id: string
@@ -23,7 +23,7 @@ export abstract class DocumentClass extends DocumentParser {
             defineCollection: (collection) => {
                 this._collectionDefinition = collection
             },
-            event: (event, listener) => {
+            defineEvent: (event, listener) => {
                 switch (event) {
                     case "beforeWrite":
                         this._listeners.push(new DocumentParserListener(event, listener))
