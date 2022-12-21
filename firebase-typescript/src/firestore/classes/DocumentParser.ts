@@ -79,12 +79,8 @@ export abstract class DocumentParser {
     fromData(data: DocumentData) {
         const _self = this as any
         for (const _definition of this._definitions) {
-            if (!(_definition._remoteField in data)) {
-                _self[_definition._field] = _definition.defaultValue
-            } else {
-
-            } if (data[_definition._remoteField] == null) {
-                _self[_definition._field] = null
+            if (data[_definition._remoteField] == null) {
+                _self[_definition._field] = _definition._defaultValue
             } else {
                 switch (_definition._type) {
                     case "timestamp":
