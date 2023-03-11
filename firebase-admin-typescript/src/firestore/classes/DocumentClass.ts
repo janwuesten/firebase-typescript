@@ -1,4 +1,4 @@
-import type * as admin from "firebase-admin"
+import { CollectionReference, DocumentData, SetOptions } from "firebase-admin/firestore"
 import { DocumentParser, DocumentParserDefinition, DocumentParserListener } from "./DocumentParser"
 import { CollectionDefine, DocumentDefine, EventDefine } from "../types/DefineTypes"
 
@@ -9,7 +9,7 @@ export interface DocumentClassDefineProps {
 }
 export abstract class DocumentClass extends DocumentParser {
     protected _id: string
-    private _collectionDefinition: (() => admin.firestore.CollectionReference<admin.firestore.DocumentData>) | null = null
+    private _collectionDefinition: (() => CollectionReference<DocumentData>) | null = null
 
     constructor(id: string = "") {
         super()
@@ -43,7 +43,7 @@ export abstract class DocumentClass extends DocumentParser {
             throw new Error("called update without id")
         }
     }
-    async set(options: admin.firestore.SetOptions = { merge: true }) {
+    async set(options: SetOptions = { merge: true }) {
         if (this._id) {
             await this.ref.set(this.toData(), options)
         } else {
@@ -79,7 +79,7 @@ export abstract class DocumentClass extends DocumentParser {
     get ref() {
         return this.collectionRef.doc(this._id)
     }
-    get collectionRef(): admin.firestore.CollectionReference<admin.firestore.DocumentData> {
+    get collectionRef(): CollectionReference<DocumentData> {
         if (!this._collectionDefinition) {
             throw new Error("collection not defined. Define with defineCollection()")
         }

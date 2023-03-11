@@ -1,4 +1,4 @@
-import * as admin from "firebase-admin"
+import { getFirestore, WriteBatch, WriteResult } from "firebase-admin/firestore"
 import { DocumentClass } from "./DocumentClass"
 
 export interface DocumentBatchOptions {
@@ -8,14 +8,14 @@ export class DocumentBatch {
     private _options: DocumentBatchOptions = {
         split: false
     }
-    private _lastBatch: admin.firestore.WriteBatch
+    private _lastBatch: WriteBatch
     private _lastBatchActions: number
     private _maxBatchActions = 500
-    private _transactions: Promise<admin.firestore.WriteResult[]>[] = []
+    private _transactions: Promise<WriteResult[]>[] = []
 
     
     constructor(options?: DocumentBatchOptions) {
-        this._lastBatch = admin.firestore().batch()
+        this._lastBatch = getFirestore().batch()
         this._lastBatchActions = 0
         if (options) {
             this._options = options
@@ -25,7 +25,7 @@ export class DocumentBatch {
         if (this._lastBatchActions >= this._maxBatchActions) {
             if (this._options.split) {
                 this._transactions.push(this._lastBatch.commit())
-                this._lastBatch = admin.firestore().batch()
+                this._lastBatch = getFirestore().batch()
                 this._lastBatchActions = 0
             } else {
                 throw new Error("max_batch_actions")

@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/janwuesten/firebase-typescript#readme",
   "devDependencies": {
-    "firebase": "^9.16.0",
+    "firebase": "^9.17.2",
     "typescript": "^4.9.5"
   }
 }
