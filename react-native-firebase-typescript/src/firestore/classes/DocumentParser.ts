@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase-admin/firestore"
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { DocumentMap } from "./DocumentMap"
 import { DocumentData, FieldType } from "../types/DocumentTypes"
 import { EventDefineCallback } from "../types/DefineTypes"
@@ -100,7 +100,7 @@ export abstract class DocumentParser {
             } else {
                 switch (_definition._type) {
                     case "timestamp":
-                        _self[_definition._field] = (data[_definition._remoteField] as Timestamp).toDate()
+                        _self[_definition._field] = (data[_definition._remoteField] as FirebaseFirestoreTypes.Timestamp).toDate()
                         break
                     case "map":
                         if (!_definition._defineMap) {

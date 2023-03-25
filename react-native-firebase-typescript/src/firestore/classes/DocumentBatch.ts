@@ -1,21 +1,23 @@
-import { getFirestore, WriteBatch, WriteResult } from "firebase-admin/firestore"
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { DocumentClass } from "./DocumentClass"
 
 export interface DocumentBatchOptions {
     split?: boolean
 }
 export class DocumentBatch {
+    private _firestore: FirebaseFirestoreTypes.Module
     private _options: DocumentBatchOptions = {
         split: false
     }
-    private _lastBatch: WriteBatch
+    private _lastBatch: FirebaseFirestoreTypes.WriteBatch
     private _lastBatchActions: number
     private _maxBatchActions = 500
-    private _transactions: Promise<WriteResult[]>[] = []
+    private _transactions: Promise<void>[] = []
 
     
-    constructor(options?: DocumentBatchOptions) {
-        this._lastBatch = getFirestore().batch()
+    constructor(firestore: FirebaseFirestoreTypes.Module, options?: DocumentBatchOptions) {
+        this._firestore = firestore
+        this._lastBatch = this._firestore.batch()
         this._lastBatchActions = 0
         if (options) {
             this._options = options
@@ -25,7 +27,7 @@ export class DocumentBatch {
         if (this._lastBatchActions >= this._maxBatchActions) {
             if (this._options.split) {
                 this._transactions.push(this._lastBatch.commit())
-                this._lastBatch = getFirestore().batch()
+                this._lastBatch = this._firestore.batch()
                 this._lastBatchActions = 0
             } else {
                 throw new Error("max_batch_actions")

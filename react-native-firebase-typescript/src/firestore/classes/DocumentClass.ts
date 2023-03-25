@@ -1,4 +1,4 @@
-import { CollectionReference, DocumentData, SetOptions } from "firebase-admin/firestore"
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
 import { DocumentParser, DocumentParserDefinition, DocumentParserListener } from "./DocumentParser"
 import { CollectionDefine, DocumentDefine, EventDefine } from "../types/DefineTypes"
 
@@ -9,7 +9,7 @@ export interface DocumentClassDefineProps {
 }
 export abstract class DocumentClass extends DocumentParser {
     protected _id: string
-    private _collectionDefinition: (() => CollectionReference<DocumentData>) | null = null
+    private _collectionDefinition: (() => FirebaseFirestoreTypes.CollectionReference) | null = null
 
     constructor(id: string = "") {
         super()
@@ -38,12 +38,12 @@ export abstract class DocumentClass extends DocumentParser {
 
     async update() {
         if (this._id) {
-            await this.ref.update(this.toData())
+            await this.ref.update(this.toData() as Partial<unknown>)
         } else {
             throw new Error("called update without id")
         }
     }
-    async set(options: SetOptions = { merge: true }) {
+    async set(options: FirebaseFirestoreTypes.SetOptions = { merge: true }) {
         if (this._id) {
             await this.ref.set(this.toData(), options)
         } else {
@@ -79,7 +79,7 @@ export abstract class DocumentClass extends DocumentParser {
     get ref() {
         return this.collectionRef.doc(this._id)
     }
-    get collectionRef(): CollectionReference<DocumentData> {
+    get collectionRef(): FirebaseFirestoreTypes.CollectionReference {
         if (!this._collectionDefinition) {
             throw new Error("collection not defined. Define with defineCollection()")
         }

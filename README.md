@@ -21,7 +21,7 @@ the Firestore Database. It makes creating, reading and maintaining Firestore Doc
 ## Basic usage example
 ### Admin SDK
 ```ts
-import * as admin from "firebase-admin"
+import { getFirestore } from "firebase-admin/firestore"
 import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-admin-typescript"
 
 export class Account extends DocumentClass {
@@ -36,7 +36,7 @@ export class Account extends DocumentClass {
         define("lastName", "string")
 
         // Define what collection will be used
-        defineCollection(() => admin.firestore().collection("account"))
+        defineCollection(() => getFirestore().collection("account"))
     }
 }
 ```
