@@ -1,0 +1,30 @@
+{
+  "name": "@janwuesten/react-native-firebase-typescript",
+  "version": "0.1.6",
+  "description": "Firebase helper classes to use firebase with typescript in react native",
+  "main": "lib/index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janwuesten/firebase-typescript.git"
+  },
+  "keywords": [
+    "firebase",
+    "typescript",
+    "helper"
+  ],
+  "author": "Jan Wüsten",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/janwuesten/firebase-typescript/issues"
+  },
+  "homepage": "https://github.com/janwuesten/firebase-typescript#readme",
+  "devDependencies": {
+    "@react-native-firebase/app": "^17.4.0",
+    "@react-native-firebase/firestore": "^17.4.0",
+    "typescript": "^4.9.5"
+  }
+}
