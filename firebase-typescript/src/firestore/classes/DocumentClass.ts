@@ -8,12 +8,12 @@ export interface DocumentClassDefineProps {
     defineEvent: EventDefine
 }
 export abstract class DocumentClass extends DocumentParser {
-    protected _id: string
+    id: string
     private _collectionDefinition: (() => CollectionReference) | null = null
 
     constructor(id: string = "") {
         super()
-        this._id = id
+        this.id = id
         this.definition({
             define: (propName, propType) => {
                 const _definition = new DocumentParserDefinition(propName, propType)
@@ -37,30 +37,30 @@ export abstract class DocumentClass extends DocumentParser {
     abstract definition({ define, defineCollection }: DocumentClassDefineProps): void
 
     async update() {
-        if (this._id) {
-            await updateDoc(this.ref, this.toData() as Partial<unknown>)
+        if (this.id) {
+            await updateDoc(this.ref, await this.toData() as Partial<unknown>)
         } else {
             throw new Error("called update without id")
         }
     }
     async set(options: SetOptions = { merge: true }) {
-        if (this._id) {
-            await setDoc(this.ref, this.toData(), options)
+        if (this.id) {
+            await setDoc(this.ref, await this.toData(), options)
         } else {
-            const addedDoc = await addDoc(this.collectionRef, this.toData())
-            this._id = addedDoc.id
+            const addedDoc = await addDoc(this.collectionRef, await this.toData())
+            this.id = addedDoc.id
         }
     }
     async add() {
-        if (this._id) {
+        if (this.id) {
             throw new Error("called add with id")
         } else {
-            const addedDoc = await addDoc(this.collectionRef, this.toData())
-            this._id = addedDoc.id
+            const addedDoc = await addDoc(this.collectionRef, await this.toData())
+            this.id = addedDoc.id
         }
     }
     async delete() {
-        if (this._id) {
+        if (this.id) {
             await deleteDoc(this.ref)
         }
     }
@@ -69,15 +69,12 @@ export abstract class DocumentClass extends DocumentParser {
         if (!doc.exists) {
             return false
         }
-        this.fromData(doc.data()!)
+        await this.fromData(doc.data()!)
         return true
     }
 
-    get id() {
-        return this._id
-    }
     get ref() {
-        return doc(this.collectionRef, this._id)
+        return doc(this.collectionRef, this.id)
     }
     get collectionRef(): CollectionReference {
         if (!this._collectionDefinition) {
