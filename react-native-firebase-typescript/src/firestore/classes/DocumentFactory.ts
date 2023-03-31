@@ -7,14 +7,20 @@ export class DocumentFactory<T extends DocumentClass> {
     constructor(constructor: ((id: string, data: DocumentData) => T)) {
         this.__defineClass = constructor
     }
-    async getDocs(query: FirebaseFirestoreTypes.Query) {
-        const result = await query.get()
+    async fromDocs(documents: FirebaseFirestoreTypes.QueryDocumentSnapshot[]) {
         const docs: T[] = []
-        await Promise.all(result.docs.map(async (doc) => {
+        await Promise.all(documents.map(async (doc) => {
             const document = await this.__defineClass(doc.id, doc.data() as DocumentData).fromData(doc.data() as DocumentData)
             document.id = doc.id
             docs.push(document)
         }))
         return docs
+    }
+    async fromSnapshot(snapshot: FirebaseFirestoreTypes.QuerySnapshot) {
+        return await this.fromDocs(snapshot.docs)
+    }
+    async getDocs(query: FirebaseFirestoreTypes.Query) {
+        const result = await query.get()
+        return await this.fromDocs(result.docs)
     }
 }
