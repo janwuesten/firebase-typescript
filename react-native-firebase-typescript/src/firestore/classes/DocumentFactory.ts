@@ -16,7 +16,13 @@ export class DocumentFactory<T extends DocumentClass> {
         }))
         return docs
     }
-    async fromSnapshot(snapshot: FirebaseFirestoreTypes.QuerySnapshot) {
+    async fromSnapshot(snapshot: FirebaseFirestoreTypes.DocumentSnapshot) {
+        if (!snapshot.exists) {
+            return null
+        }
+        return await this.__defineClass(snapshot.id, snapshot.data() as DocumentData).fromData(snapshot.data() as DocumentData)
+    }
+    async fromQuerySnapshot(snapshot: FirebaseFirestoreTypes.QuerySnapshot) {
         return await this.fromDocs(snapshot.docs)
     }
     async getDocs(query: FirebaseFirestoreTypes.Query) {

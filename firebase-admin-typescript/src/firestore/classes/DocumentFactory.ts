@@ -1,4 +1,4 @@
-import { Query, QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore"
+import { Query, QueryDocumentSnapshot, QuerySnapshot, DocumentSnapshot } from "firebase-admin/firestore"
 import { DocumentData } from "../types/DocumentTypes"
 import { DocumentClass } from "./DocumentClass"
 
@@ -16,7 +16,13 @@ export class DocumentFactory<T extends DocumentClass> {
         }))
         return docs
     }
-    async fromSnapshot(snapshot: QuerySnapshot) {
+    async fromSnapshot(snapshot: DocumentSnapshot) {
+        if (!snapshot.exists) {
+            return null
+        }
+        return await this.__defineClass(snapshot.id, snapshot.data() as DocumentData).fromData(snapshot.data() as DocumentData)
+    }
+    async fromQuerySnapshot(snapshot: QuerySnapshot) {
         return await this.fromDocs(snapshot.docs)
     }
     async getDocs(query: Query<unknown>) {
