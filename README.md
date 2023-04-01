@@ -1,7 +1,5 @@
 # Firebase for TypeScript
 
-> INFO: Firebase for TypeScript is currently in BETA status and should probably not be used for production as some APIs and functions might change in the future.
-
 ## Introduction
 When working with Firebase and TypeScript creating Classes for Firestore Documents can be a bit annoying.
 As there is not standard way of parsing and writing your Class to a Firestore Document, every project
@@ -17,6 +15,9 @@ the Firestore Database. It makes creating, reading and maintaining Firestore Doc
 
 ### Installation for Web SDK (requires Web version 9)
 `npm install firebase @janwuesten/firebase-typescript`
+
+### Installation for react native
+Visit the [documentation on GitHub Wiki](https://github.com/janwuesten/firebase-typescript/wiki/1.-Getting-started#installation-for-react-native) to view installation steps for react native.
 
 ## Basic usage example
 ### Admin SDK
@@ -102,4 +103,4 @@ const account = new Account("document id")
 await account.delete()
 ```
 
-> For more information on how to use the Firebase helper visit the [GitHub Wiki page here](https://github.com/janwuesten/firebase-typescript/wiki).
+For more information on how to use firebase-typescript with all its features visit the [documentation on GitHub Wiki here](https://github.com/janwuesten/firebase-typescript/wiki).
