@@ -20,7 +20,9 @@ export class DocumentFactory<T extends DocumentClass> {
         if (!snapshot.exists()) {
             return null
         }
-        return await this.__defineClass(snapshot.id, snapshot.data() as DocumentData).fromData(snapshot.data() as DocumentData)
+        const doc = await this.__defineClass(snapshot.id, snapshot.data() as DocumentData).fromData(snapshot.data() as DocumentData)
+        doc.id = snapshot.id
+        return doc
     }
     async fromQuerySnapshot(snapshot: QuerySnapshot) {
         return await this.fromDocs(snapshot.docs)
