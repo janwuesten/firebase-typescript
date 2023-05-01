@@ -1,6 +1,6 @@
 {
   "name": "@janwuesten/firebase-admin-typescript",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Firebase helper classes to use firebase with typescript",
   "main": "lib/index.js",
   "scripts": {

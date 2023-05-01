@@ -70,14 +70,20 @@ export abstract class DocumentParser {
         
     }
 
-    async toDocumentMapArray(array: DocumentMap[]): Promise<DocumentData[]> {
+    async toDocumentMapArray(array: DocumentMap[]): Promise<DocumentData[] | null> {
+        if (!array) {
+            return null
+        }
         const items: DocumentData[] = []
         for (const item of array) {
             items.push(await item.toData())
         }
         return items
     }
-    async fromDocumentMapArray<T extends DocumentMap>(data: DocumentData[], generator: (data: DocumentData) => T): Promise<T[]> {
+    async fromDocumentMapArray<T extends DocumentMap>(data: DocumentData[], generator: (data: DocumentData) => T): Promise<T[] | null> {
+        if (!data) {
+            return null
+        }
         const items: T[] = []
         if (data) {
             for (const item of data) {
@@ -85,6 +91,31 @@ export abstract class DocumentParser {
             }
         }
         return items
+    }
+    async toDocumentMapMappable(mappable: Map<string, DocumentMap>): Promise<Record<string, DocumentData> | null> {
+        if (!mappable) {
+            return null
+        }
+        const items: Record<string, DocumentData> = {}
+        for (const [key, val] of Object.entries(Object.fromEntries(mappable))) {
+            items[key] = await val.toData()
+        }
+        return items
+    }
+    async fromDocumentMapMappable<T extends DocumentMap>(data: DocumentData, generator: (data: DocumentData) => T): Promise<Map<string, T> | null> {
+        if (!data) {
+            return null
+        }
+        const items: Map<string, T> = new Map()
+        if (data) {
+            for (const [key, val] of Object.entries(data)) {
+                items.set(key, await generator(val as DocumentData).fromData(val as DocumentData))
+            }
+        }
+        return items
+    }
+    clone(): DocumentData {
+        return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
     }
 
     async fromData(data: DocumentData) {
@@ -112,6 +143,12 @@ export abstract class DocumentParser {
                             throw new Error(`map definition for field ${definition._field} missing. Define with .defineMap()`)
                         }
                         self[definition._field] = await this.fromDocumentMapArray(data[definition._remoteField] as DocumentData[], definition._defineMap!)
+                        break
+                    case "mapMappable":
+                        if (!definition._defineMap) {
+                            throw new Error(`map definition for field ${definition._field} missing. Define with .defineMap()`)
+                        }
+                        self[definition._field] = await this.fromDocumentMapMappable(data[definition._remoteField] as DocumentData, definition._defineMap!)
                         break
                     default:
                         self[definition._field] = data[definition._remoteField]
@@ -143,6 +180,9 @@ export abstract class DocumentParser {
                             break
                         case "mapArray":
                             data[definition._remoteField] = await this.toDocumentMapArray(self[definition._field])
+                            break
+                        case "mapMappable":
+                            data[definition._remoteField] = await this.toDocumentMapMappable(self[definition._field])
                             break
                         default:
                             data[definition._remoteField] = self[definition._field]
