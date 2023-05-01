@@ -114,7 +114,7 @@ export abstract class DocumentParser {
         }
         return items
     }
-    clone(): DocumentData {
+    clone<T extends DocumentParser>(): T {
         return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
     }
 
