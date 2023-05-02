@@ -2,11 +2,13 @@
 
 ## Supported Versions
 
-Please note that the support for all 0.x.x versions will drop as soon as the first production ready version (1.x.x) is available.
+All versions marked with :white_check_mark: will receive security updates.
+Keep in mind that the firebase sdk you use for your might not get security updates even tho you are using a supported version of this package.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.2.x   | :white_check_mark: |
+| 1.x.x   | :white_check_mark: |
+| 0.2.x   | :x: |
 | 0.1.x   | :x: |
 
 ## Reporting a Vulnerability
