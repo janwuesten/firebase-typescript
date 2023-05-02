@@ -1,3 +1,6 @@
+[![Publish npm package](https://github.com/janwuesten/firebase-typescript/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/janwuesten/firebase-typescript/actions/workflows/npm-publish.yml)
+[![Test npm package](https://github.com/janwuesten/firebase-typescript/actions/workflows/npm-test.yml/badge.svg)](https://github.com/janwuesten/firebase-typescript/actions/workflows/npm-test.yml)
+
 # Firebase for TypeScript
 
 ## Introduction
