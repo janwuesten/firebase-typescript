@@ -3,7 +3,7 @@
 ## Supported Versions
 
 All versions marked with :white_check_mark: will receive security updates.
-Keep in mind that the firebase sdk you use for your might not get security updates even tho you are using a supported version of this package.
+Keep in mind that the firebase sdk you use for your project might not get security updates even tho you are using a supported version of this package.
 
 | Version | Supported          |
 | ------- | ------------------ |
