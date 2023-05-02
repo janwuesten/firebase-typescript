@@ -2,6 +2,7 @@ import { Timestamp } from "firebase-admin/firestore"
 import { DocumentMap } from "./DocumentMap"
 import { DocumentData, FieldType } from "../types/DocumentTypes"
 import { EventDefineCallback } from "../types/DefineTypes"
+import { Mappable } from "./Mappable"
 
 export class DocumentParserListener {
     event: string
@@ -92,7 +93,7 @@ export abstract class DocumentParser {
         }
         return items
     }
-    async toDocumentMapMappable(mappable: Map<string, DocumentMap>): Promise<Record<string, DocumentData> | null> {
+    async toDocumentMapMappable(mappable: Mappable<DocumentParser>): Promise<Record<string, DocumentData> | null> {
         if (!mappable) {
             return null
         }
@@ -102,11 +103,11 @@ export abstract class DocumentParser {
         }
         return items
     }
-    async fromDocumentMapMappable<T extends DocumentMap>(data: DocumentData, generator: (data: DocumentData) => T): Promise<Map<string, T> | null> {
+    async fromDocumentMapMappable<T extends DocumentMap>(data: DocumentData, generator: (data: DocumentData) => T): Promise<Mappable<T> | null> {
         if (!data) {
             return null
         }
-        const items: Map<string, T> = new Map()
+        const items = new Mappable<T>()
         if (data) {
             for (const [key, val] of Object.entries(data)) {
                 items.set(key, await generator(val as DocumentData).fromData(val as DocumentData))
@@ -144,7 +145,7 @@ export abstract class DocumentParser {
                         }
                         self[definition._field] = await this.fromDocumentMapArray(data[definition._remoteField] as DocumentData[], definition._defineMap!)
                         break
-                    case "mapMappable":
+                    case "mappable":
                         if (!definition._defineMap) {
                             throw new Error(`map definition for field ${definition._field} missing. Define with .defineMap()`)
                         }
@@ -181,7 +182,7 @@ export abstract class DocumentParser {
                         case "mapArray":
                             data[definition._remoteField] = await this.toDocumentMapArray(self[definition._field])
                             break
-                        case "mapMappable":
+                        case "mappable":
                             data[definition._remoteField] = await this.toDocumentMapMappable(self[definition._field])
                             break
                         default:
