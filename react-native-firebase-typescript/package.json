@@ -1,6 +1,6 @@
 {
   "name": "@janwuesten/react-native-firebase-typescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Firebase helper classes to use firebase with typescript in react native",
   "main": "lib/index.js",
   "scripts": {
