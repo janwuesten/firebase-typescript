@@ -126,8 +126,13 @@ export abstract class DocumentParser {
             await listener.listener()
         }))
         for (const definition of this._definitions) {
-            if (data[definition._remoteField] == null) {
-                self[definition._field] = definition._defaultValue
+            if (!(definition._remoteField in data)) {
+                const _defaultValue = definition._defaultValue
+                if (typeof _defaultValue == "function") {
+                    self[definition._field] = _defaultValue()
+                } else {
+                    self[definition._field] = _defaultValue
+                }
             } else {
                 switch (definition._type) {
                     case "timestamp":

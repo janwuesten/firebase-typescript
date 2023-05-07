@@ -16,7 +16,7 @@ class TypeTestMap extends DocumentMap {
     }
 }
 class TypeTest extends DocumentClass {
-    string: string = ""
+    string: string = "default value test"
     number: number = 0
     boolean: boolean = false
     geopoint: GeoPoint = new GeoPoint(0, 0)
@@ -27,9 +27,8 @@ class TypeTest extends DocumentClass {
     timestamp: Date = new Date()
 
     definition({ define, defineCollection }: DocumentClassDefineProps): void {
-        define("string", "string")
-        define("number", "string")
-        define("population", "number")
+        define("string", "string").defaultValue(() => this.string)
+        define("number", "number").defaultValue(10)
         define("boolean", "boolean")
         define("geopoint", "geopoint")
         define("stringArray", "array")
@@ -110,7 +109,6 @@ test("mappable", async () => {
     mappable.set("test1", "test value 1")
     mappable.set("test2", "test value 2")
     const keysArray = mappable.keysAsArray()
-    console.log(keysArray)
     expect(keysArray.length).toBe(2)
     expect(keysArray[0]).toBe("test1")
     expect(keysArray[1]).toBe("test2")
@@ -118,6 +116,17 @@ test("mappable", async () => {
     expect(valuesArray.length).toBe(2)
     expect(valuesArray[0]).toBe("test value 1")
     expect(valuesArray[1]).toBe("test value 2")
+})
+test("default values", async () => {
+    const typeTest = new TypeTest("wrong id")
+    expect(typeTest.number).toBe(0)
+    expect(typeTest.string).toBe("default value test")
+    await typeTest.fromData({})
+    expect(typeTest.string).toBe("default value test")
+    expect(typeTest.number).toBe(10)
+    typeTest.string = "test"
+    await typeTest.fromData({})
+    expect(typeTest.string).toBe("test")
 })
 test("clean", async () => {
     const typeTests = await new DocumentFactory(() => new TypeTest).getDocs(getFirestore().collection("typetest"))
