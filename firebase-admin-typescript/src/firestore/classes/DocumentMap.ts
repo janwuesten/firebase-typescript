@@ -17,6 +17,9 @@ export abstract class DocumentMap extends DocumentParser {
             defineEvent: (event, listener) => {
                 switch (event) {
                     case "beforeWrite":
+                    case "afterWrite":
+                    case "afterRead":
+                    case "beforeRead":
                         this._listeners.push(new DocumentParserListener(event, listener))
                         break
                     default:
