@@ -46,7 +46,7 @@ export abstract class DocumentClass extends DocumentParser {
             throw new Error("called update without id")
         }
     }
-    async set(options: FirebaseFirestoreTypes.SetOptions = { merge: true }) {
+    async set(options: FirebaseFirestoreTypes.SetOptions = {}) {
         if (this.id) {
             await this.ref.set(await this.toData(), options)
         } else {
