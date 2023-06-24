@@ -1,15 +1,18 @@
-import { addDoc, CollectionReference, deleteDoc, doc, getDoc, setDoc, SetOptions, updateDoc } from "firebase/firestore"
+import { CollectionReference, SetOptions } from "firebase/firestore"
 import { DocumentParser, DocumentParserDefinition, DocumentParserListener } from "./DocumentParser"
-import { CollectionDefine, DocumentDefine, EventDefine } from "../types/DefineTypes"
+import { CollectionDefine, DocumentDefine, EventDefine, HandlerDefine } from "../types/DefineTypes"
+import { DefaultDocumentClassHandler, DocumentClassHandler } from "./DocumentClassHandler"
 
 export interface DocumentClassDefineProps {
     define: DocumentDefine
     defineCollection: CollectionDefine
+    defineHandler: HandlerDefine,
     defineEvent: EventDefine
 }
 export abstract class DocumentClass extends DocumentParser {
     id: string
     private _collectionDefinition: (() => CollectionReference) | null = null
+    private __handlerDefinition: DocumentClassHandler = new DefaultDocumentClassHandler()
 
     constructor(id: string = "") {
         super()
@@ -22,6 +25,9 @@ export abstract class DocumentClass extends DocumentParser {
             },
             defineCollection: (collection) => {
                 this._collectionDefinition = collection
+            },
+            defineHandler: (handler) => {
+                this.__handlerDefinition = handler
             },
             defineEvent: (event, listener) => {
                 switch (event) {
@@ -41,16 +47,16 @@ export abstract class DocumentClass extends DocumentParser {
 
     async update() {
         if (this.id) {
-            await updateDoc(this.ref, await this.toData() as Partial<unknown>)
+            await this.__handlerDefinition.updateDoc(this.ref, await this.toData() as Partial<unknown>)
         } else {
             throw new Error("called update without id")
         }
     }
     async set(options: SetOptions = {}) {
         if (this.id) {
-            await setDoc(this.ref, await this.toData(), options)
+            await this.__handlerDefinition.setDoc(this.ref, await this.toData(), options)
         } else {
-            const addedDoc = await addDoc(this.collectionRef, await this.toData())
+            const addedDoc = await this.__handlerDefinition.addDoc(this.collectionRef, await this.toData())
             this.id = addedDoc.id
         }
     }
@@ -58,17 +64,17 @@ export abstract class DocumentClass extends DocumentParser {
         if (this.id) {
             throw new Error("called add with id")
         } else {
-            const addedDoc = await addDoc(this.collectionRef, await this.toData())
+            const addedDoc = await this.__handlerDefinition.addDoc(this.collectionRef, await this.toData())
             this.id = addedDoc.id
         }
     }
     async delete() {
         if (this.id) {
-            await deleteDoc(this.ref)
+            await this.__handlerDefinition.deleteDoc(this.ref)
         }
     }
     async get() {
-        const doc = await getDoc(this.ref)
+        const doc = await this.__handlerDefinition.getDoc(this.ref)
         if (!doc.exists) {
             return false
         }
@@ -77,7 +83,7 @@ export abstract class DocumentClass extends DocumentParser {
     }
 
     get ref() {
-        return doc(this.collectionRef, this.id)
+        return this.__handlerDefinition.doc(this.collectionRef, this.id)
     }
     get collectionRef(): CollectionReference {
         if (!this._collectionDefinition) {
