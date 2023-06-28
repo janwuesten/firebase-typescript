@@ -1,4 +1,4 @@
-import { CollectionReference, DocumentData, DocumentReference, DocumentSnapshot, SetOptions } from "firebase/firestore";
+import { CollectionReference, DocumentData, DocumentReference, DocumentSnapshot, SetOptions, addDoc, deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 export interface DocumentClassHandler {
   getDoc(ref: DocumentReference): Promise<DocumentSnapshot<DocumentData>>
@@ -10,22 +10,22 @@ export interface DocumentClassHandler {
 }
 export class DefaultDocumentClassHandler implements DocumentClassHandler {
   getDoc(ref: DocumentReference<DocumentData>): Promise<DocumentSnapshot<DocumentData>> {
-    throw new Error("Method not implemented.");
+    return getDoc(ref)
   }
   addDoc(collectionRef: CollectionReference<DocumentData>, data: Partial<unknown>): Promise<DocumentReference<Partial<unknown>>> {
-    throw new Error("Method not implemented.");
+    return addDoc(collectionRef, data)
   }
   setDoc(ref: DocumentReference<DocumentData>, data: Partial<unknown>, options: SetOptions): Promise<void> {
-    throw new Error("Method not implemented.");
+    return setDoc(ref, data, options)
   }
   updateDoc(ref: DocumentReference<DocumentData>, data: Partial<unknown>): Promise<void> {
-    throw new Error("Method not implemented.");
+    return updateDoc(ref, data)
   }
   deleteDoc(ref: DocumentReference<DocumentData>): Promise<void> {
-    throw new Error("Method not implemented.");
+    return deleteDoc(ref)
   }
   doc(ref: CollectionReference<DocumentData>, id: string): DocumentReference<DocumentData> {
-    throw new Error("Method not implemented.");
+    return doc(ref, id)
   }
 
 }
