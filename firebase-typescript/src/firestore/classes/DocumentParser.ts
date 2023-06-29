@@ -115,6 +115,28 @@ export abstract class DocumentParser {
         }
         return items
     }
+    async toDocumentMapSimpleMappable(mappable: Mappable<string | number | boolean | null>): Promise<Record<string, string | number | boolean | null> | null> {
+        if (!mappable) {
+            return null
+        }
+        const items: Record<string, string | number | boolean | null> = {}
+        for (const [key, val] of Object.entries(Object.fromEntries(mappable))) {
+            items[key] = val as string | number | boolean | null
+        }
+        return items
+    }
+    async fromDocumentMapSimpleMappable(data: DocumentData): Promise<Mappable<string | number | boolean | null> | null> {
+        if (!data) {
+            return null
+        }
+        const items = new Mappable<string | number | boolean | null>()
+        if (data) {
+            for (const [key, val] of Object.entries(data)) {
+                items.set(key, val as string | number | boolean | null)
+            }
+        }
+        return items
+    }
     clone<T extends DocumentParser>(): T {
         return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
     }
@@ -156,6 +178,9 @@ export abstract class DocumentParser {
                         }
                         self[definition._field] = await this.fromDocumentMapMappable(data[definition._remoteField] as DocumentData, definition._defineMap!)
                         break
+                    case "simpleMappable":
+                        self[definition._field] = await this.fromDocumentMapSimpleMappable(data[definition._remoteField] as DocumentData)
+                        break
                     default:
                         self[definition._field] = data[definition._remoteField]
                         break
@@ -189,6 +214,9 @@ export abstract class DocumentParser {
                             break
                         case "mappable":
                             data[definition._remoteField] = await this.toDocumentMapMappable(self[definition._field])
+                            break
+                        case "simpleMappable":
+                            data[definition._remoteField] = await this.toDocumentMapSimpleMappable(self[definition._field])
                             break
                         default:
                             data[definition._remoteField] = self[definition._field]
