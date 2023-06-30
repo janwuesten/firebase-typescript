@@ -3,76 +3,78 @@ import { credential } from "firebase-admin"
 import { initializeApp } from "firebase-admin/app"
 import { getFirestore } from "firebase-admin/firestore"
 import { DocumentBatch, DocumentClass, DocumentClassDefineProps, DocumentFactory } from "../src"
+import { DocumentHandler, BatchHandler } from "./handler"
 
 initializeApp({
-    credential: credential.cert("../serviceAccountKey.json")
+  credential: credential.cert("serviceAccountKey.json")
 })
 
 class Country extends DocumentClass {
-    name: string = ""
-    code: string = ""
+  name: string = ""
+  code: string = ""
 
-    definition({ define, defineCollection }: DocumentClassDefineProps): void {
-        define("name", "string")
-        define("code", "string")
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps): void {
+    define("name", "string")
+    define("code", "string")
 
-        defineCollection(() => getFirestore().collection("country"))
-    }
+    defineCollection(() => getFirestore().collection("country"))
+    defineHandler(new DocumentHandler())
+  }
 }
 
 let countryID = "";
 
 test("adding documents", async () => {
-    const country = new Country()
-    country.code = "DK"
-    country.name = "Denmark"
-    expect(country.id).toBeFalsy()
-    await country.add()
-    expect(country.id).toBeTruthy()
-    countryID = country.id
+  const country = new Country()
+  country.code = "DK"
+  country.name = "Denmark"
+  expect(country.id).toBeFalsy()
+  await country.add()
+  expect(country.id).toBeTruthy()
+  countryID = country.id
 })
 test("getting documents", async () => {
-    const country = new Country(countryID)
-    expect(await country.get()).toBe(true)
-    expect(country.id).toBe(countryID)
-    expect(country.name).toBe("Denmark")
-    expect(country.code).toBe("DK")
+  const country = new Country(countryID)
+  expect(await country.get()).toBe(true)
+  expect(country.id).toBe(countryID)
+  expect(country.name).toBe("Denmark")
+  expect(country.code).toBe("DK")
 })
 test("updating documents", async () => {
-    const country = new Country(countryID)
-    expect(await country.get()).toBe(true)
-    expect(country.id).toBe(countryID)
-    expect(country.name).toBe("Denmark")
-    expect(country.code).toBe("DK")
-    country.name = "Germany"
-    country.code = "DE"
-    await country.update()
+  const country = new Country(countryID)
+  expect(await country.get()).toBe(true)
+  expect(country.id).toBe(countryID)
+  expect(country.name).toBe("Denmark")
+  expect(country.code).toBe("DK")
+  country.name = "Germany"
+  country.code = "DE"
+  await country.update()
 })
 test("setting documents", async () => {
-    const country = new Country(countryID)
-    expect(await country.get()).toBe(true)
-    expect(country.id).toBe(countryID)
-    expect(country.name).toBe("Germany")
-    expect(country.code).toBe("DE")
-    country.name = "Denmark"
-    country.code = "DK"
-    await country.set()
-    expect(country.id).toBe(countryID)
+  const country = new Country(countryID)
+  expect(await country.get()).toBe(true)
+  expect(country.id).toBe(countryID)
+  expect(country.name).toBe("Germany")
+  expect(country.code).toBe("DE")
+  country.name = "Denmark"
+  country.code = "DK"
+  await country.set()
+  expect(country.id).toBe(countryID)
 })
 test("deleting documents", async () => {
-    const country = new Country(countryID)
-    expect(await country.get()).toBe(true)
-    expect(country.id).toBe(countryID)
-    expect(country.name).toBe("Denmark")
-    expect(country.code).toBe("DK")
-    await country.delete()
-    expect(await new Country(countryID).get()).toBe(false)
+  const country = new Country(countryID)
+  expect(await country.get()).toBe(true)
+  expect(country.id).toBe(countryID)
+  expect(country.name).toBe("Denmark")
+  expect(country.code).toBe("DK")
+  await country.delete()
+  expect(await new Country(countryID).get()).toBe(false)
 })
 test("clean", async () => {
-    const countries = await new DocumentFactory(() => new Country).getDocs(getFirestore().collection("country"))
-    const batch = new DocumentBatch()
-    for (const country of countries) {
-        await batch.delete(country)
-    }
-    await batch.commit()
+  const countries = await new DocumentFactory(() => new Country).fromQuerySnapshot(await getFirestore().collection("country").get())
+  const batch = new DocumentBatch(new BatchHandler())
+  for (const country of countries) {
+    await batch.delete(country)
+  }
+  await batch.commit()
 })
