@@ -10,7 +10,8 @@ import {
   AdminCollectionReference,
   AdminWriteResult,
   ReactNativeDocumentReference,
-  ReactNativeCollectionReference
+  ReactNativeCollectionReference,
+  WriteBatch
 } from "../types/FirestoreTypes"
 
 export type CollectionRefResult = CollectionReference
@@ -20,6 +21,7 @@ export type SetDocResult = Promise<void> | Promise<AdminWriteResult>
 export type UpdateDocResult = Promise<void> | Promise<AdminWriteResult>
 export type DeleteDocResult = Promise<void> | Promise<AdminWriteResult>
 export type DocRefResult = DocumentReference<DocumentData>
+export type BatchResult = WriteBatch
 
 export interface DocumentClassHandler<DR extends DocumentReference, CR extends CollectionReference> {
   collection(name: string): CollectionRefResult
