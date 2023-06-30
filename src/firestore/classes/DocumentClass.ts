@@ -1,7 +1,8 @@
 import { CollectionReference, SetOptions } from "firebase/firestore"
 import { DocumentParser, DocumentParserDefinition, DocumentParserListener } from "./DocumentParser"
 import { CollectionDefine, DocumentDefine, EventDefine, HandlerDefine } from "../types/DefineTypes"
-import { DefaultDocumentClassHandler, DocumentClassHandler } from "./DocumentClassHandler"
+import { DocumentClassHandler } from "./DocumentClassHandler"
+import { DocumentReference } from "../types/FirestoreTypes"
 
 export interface DocumentClassDefineProps {
     define: DocumentDefine
@@ -12,7 +13,7 @@ export interface DocumentClassDefineProps {
 export abstract class DocumentClass extends DocumentParser {
     id: string
     private _collectionDefinition: (() => CollectionReference) | null = null
-    private __handlerDefinition: DocumentClassHandler = new DefaultDocumentClassHandler()
+    private __handlerDefinition: DocumentClassHandler<DocumentReference, CollectionReference> | null = null
 
     constructor(id: string = "") {
         super()
@@ -43,9 +44,12 @@ export abstract class DocumentClass extends DocumentParser {
             }
         })
     }
-    abstract definition({ define, defineCollection }: DocumentClassDefineProps): void
+    abstract definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps): void
 
     async update() {
+        if (!this.__handlerDefinition) {
+            throw new Error("handler not defined. Define with defineHandler()")
+        }
         if (this.id) {
             await this.__handlerDefinition.updateDoc(this.ref, await this.toData() as Partial<unknown>)
         } else {
@@ -53,6 +57,9 @@ export abstract class DocumentClass extends DocumentParser {
         }
     }
     async set(options: SetOptions = {}) {
+        if (!this.__handlerDefinition) {
+            throw new Error("handler not defined. Define with defineHandler()")
+        }
         if (this.id) {
             await this.__handlerDefinition.setDoc(this.ref, await this.toData(), options)
         } else {
@@ -61,6 +68,9 @@ export abstract class DocumentClass extends DocumentParser {
         }
     }
     async add() {
+        if (!this.__handlerDefinition) {
+            throw new Error("handler not defined. Define with defineHandler()")
+        }
         if (this.id) {
             throw new Error("called add with id")
         } else {
@@ -69,11 +79,17 @@ export abstract class DocumentClass extends DocumentParser {
         }
     }
     async delete() {
+        if (!this.__handlerDefinition) {
+            throw new Error("handler not defined. Define with defineHandler()")
+        }
         if (this.id) {
             await this.__handlerDefinition.deleteDoc(this.ref)
         }
     }
     async get() {
+        if (!this.__handlerDefinition) {
+            throw new Error("handler not defined. Define with defineHandler()")
+        }
         const doc = await this.__handlerDefinition.getDoc(this.ref)
         if (!doc.exists) {
             return false
@@ -83,6 +99,9 @@ export abstract class DocumentClass extends DocumentParser {
     }
 
     get ref() {
+        if (!this.__handlerDefinition) {
+            throw new Error("handler not defined. Define with defineHandler()")
+        }
         return this.__handlerDefinition.doc(this.collectionRef, this.id)
     }
     get collectionRef(): CollectionReference {
