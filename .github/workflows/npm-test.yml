@@ -7,9 +7,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        package_dir: ["firebase-admin-typescript"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -21,7 +18,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
           
       - name: Install dependencies
-        working-directory: ${{matrix.package_dir}}
         run: npm ci
 
       - name: Write serviceAccountKey.json
@@ -31,5 +27,4 @@ jobs:
           
         
       - name: Run test
-        working-directory: ${{matrix.package_dir}}
         run: npm run test

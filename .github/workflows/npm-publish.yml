@@ -10,9 +10,6 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    strategy:
-      matrix:
-        package_dir: ["firebase-admin-typescript", "firebase-typescript", "react-native-firebase-typescript"]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -24,23 +21,18 @@ jobs:
           registry-url: https://registry.npmjs.org/
           
       - name: Install dependencies
-        working-directory: ${{matrix.package_dir}}
         run: npm ci
         
       - name: Build typescript
-        working-directory: ${{matrix.package_dir}}
         run: npm run build
         
       - name: Copy README
-        working-directory: ${{matrix.package_dir}}
         run: cp ../README.md README.md
 
       - name: Copy LICENSE
-        working-directory: ${{matrix.package_dir}}
         run: cp ../LICENSE LICENSE
 
       - name: Publish Node.js package
-        working-directory: ${{matrix.package_dir}}
         run: npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
