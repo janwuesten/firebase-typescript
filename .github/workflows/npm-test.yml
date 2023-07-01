@@ -1,6 +1,7 @@
 name: Test npm package
 
 on:
+  workflow_dispatch:
   release:
     types: [created]
 
