@@ -13,44 +13,17 @@ the Firestore Database. It makes creating, reading and maintaining Firestore Doc
 
 ## Installation
 
-### Installation for Admin SDK (Functions, backend etc.)
-`npm install firebase-admin @janwuesten/firebase-admin-typescript`
+### Installation
+This installation method support firebase for web, firebase admin and firebase for react native by default.
 
-### Installation for Web SDK (requires Web version 9)
-`npm install firebase @janwuesten/firebase-typescript`
+`npm install @janwuesten/firebase-typescript`
 
-### Installation for react native
-Visit the [documentation on GitHub Wiki](https://github.com/janwuesten/firebase-typescript/wiki/1.-Getting-started#installation-for-react-native) to view installation steps for react native.
+Keep in mind that you still need to install the firebase sdk for that environment.
+[You can see more information in the Wiki](https://github.com/janwuesten/firebase-typescript/wiki/1.-Getting-started).
 
 ## Basic usage example
-### Admin SDK
 ```ts
-import { getFirestore } from "firebase-admin/firestore"
-import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-admin-typescript"
-
-export class Account extends DocumentClass {
-    username: string = ""
-    firstName: string | null = null
-    lastname: string | null = null
-
-    definition({ define, defineCollection }: DocumentClassDefineProps): void {
-        // Define a prop
-        define("username", "string")
-        define("firstName", "string")
-        define("lastName", "string")
-
-        // Define what collection will be used
-        defineCollection(() => getFirestore().collection("account"))
-    }
-}
-```
-
-### Web SDK
-```ts
-// firestore is the output of getFirestore()
-import { firestore } from "@/firestore"
-
-import { collection } from "firebase/firestore"
+import { getFirestore, collection } from "firebase/firestore"
 import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
 
 export class Account extends DocumentClass {
@@ -58,14 +31,20 @@ export class Account extends DocumentClass {
     firstName: string | null = null
     lastname: string | null = null
 
-    definition({ define, defineCollection }: DocumentClassDefineProps): void {
+    definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
         // Define a prop
         define("username", "string")
         define("firstName", "string")
         define("lastName", "string")
 
         // Define what collection will be used
-        defineCollection(() => collection(firestore, "account"))
+        defineCollection(() => collection(getFirestore(), "account"))
+
+        // Define the document class handler to set which firebase app is used
+        // and if this class if for web, admin or react native
+        // you can see example handlers for web, admin and react native in the wiki:
+        // https://github.com/janwuesten/firebase-typescript/wiki/2.1-%5BFirestore%5D-Create-document-class-handlers-and-batch-handlers
+        defineHandler(new MyClassHandler())
     }
 }
 ```
