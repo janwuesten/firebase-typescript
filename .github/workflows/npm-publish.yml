@@ -21,18 +21,15 @@ jobs:
           registry-url: https://registry.npmjs.org/
           
       - name: Install dependencies
+        working-directory: ./
         run: npm ci
         
       - name: Build typescript
+        working-directory: ./
         run: npm run build
-        
-      - name: Copy README
-        run: cp ../README.md README.md
-
-      - name: Copy LICENSE
-        run: cp ../LICENSE LICENSE
 
       - name: Publish Node.js package
+        working-directory: ./
         run: npm publish --access=public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
