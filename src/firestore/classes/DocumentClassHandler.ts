@@ -1,5 +1,5 @@
 import {
-  DocumentData,
+  FirestoreDocumentData,
   DocumentReference,
   DocumentSnapshot,
   CollectionReference,
@@ -15,12 +15,12 @@ import {
 } from "../types/FirestoreTypes"
 
 export type CollectionRefResult = CollectionReference
-export type GetDocResult = Promise<DocumentSnapshot<DocumentData>>
+export type GetDocResult = Promise<DocumentSnapshot<FirestoreDocumentData>>
 export type AddDocResult = Promise<DocumentReference<Partial<unknown>>>
 export type SetDocResult = Promise<void> | Promise<AdminWriteResult>
 export type UpdateDocResult = Promise<void> | Promise<AdminWriteResult>
 export type DeleteDocResult = Promise<void> | Promise<AdminWriteResult>
-export type DocRefResult = DocumentReference<DocumentData>
+export type DocRefResult = DocumentReference<FirestoreDocumentData>
 export type BatchResult = WriteBatch
 
 export interface DocumentClassHandler<DR extends DocumentReference, CR extends CollectionReference> {

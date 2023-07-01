@@ -29,14 +29,14 @@ export type ReactNativeWriteBatch = FirebaseFirestoreTypes.WriteBatch
 export type ReactNativeQuerySnapshot = FirebaseFirestoreTypes.QuerySnapshot
 export type ReactNativeQueryDocumentSnapshot<T extends FirebaseFirestoreTypes.DocumentData = FirebaseFirestoreTypes.DocumentData> = FirebaseFirestoreTypes.QueryDocumentSnapshot<T>
 
-export type DocumentData = WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData
-export type CollectionReference<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = DocumentData> = WebCollectionReference<T> | AdminCollectionReference<T> | ReactNativeCollectionReference<T>
-export type DocumentReference<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = DocumentData> = WebDocumentReference<T> | AdminDocumentReference<T> | ReactNativeDocumentReference<T>
-export type DocumentSnapshot<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = DocumentData> = WebDocumentSnapshot<T> | AdminDocumentSnapshot<T> | FirebaseFirestoreTypes.DocumentSnapshot<T>
+export type FirestoreDocumentData = WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData
+export type CollectionReference<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = FirestoreDocumentData> = WebCollectionReference<T> | AdminCollectionReference<T> | ReactNativeCollectionReference<T>
+export type DocumentReference<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = FirestoreDocumentData> = WebDocumentReference<T> | AdminDocumentReference<T> | ReactNativeDocumentReference<T>
+export type DocumentSnapshot<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = FirestoreDocumentData> = WebDocumentSnapshot<T> | AdminDocumentSnapshot<T> | FirebaseFirestoreTypes.DocumentSnapshot<T>
 export type SetOptions = WebSetOptions | AdminSetOptions | FirebaseFirestoreTypes.SetOptions
 export type WriteBatch = WebWriteBatch | AdminWriteBatch | ReactNativeWriteBatch
 export type QuerySnapshot = WebQuerySnapshot | AdminQuerySnapshot | ReactNativeQuerySnapshot
-export type QueryDocumentSnapshot<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = DocumentData> = WebQueryDocumentSnapshot<T> | AdminQueryDocumentSnapshot<T> | ReactNativeQueryDocumentSnapshot<T>
+export type QueryDocumentSnapshot<T extends WebDocumentData | AdminDocumentData | FirebaseFirestoreTypes.DocumentData = FirestoreDocumentData> = WebQueryDocumentSnapshot<T> | AdminQueryDocumentSnapshot<T> | ReactNativeQueryDocumentSnapshot<T>
 
 export {
   WebCollectionReference,

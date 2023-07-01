@@ -1,4 +1,5 @@
 export * from "./types/DocumentTypes"
+export * from "./types/FirestoreTypes"
 export * from "./classes/DocumentClass"
 export * from "./classes/DocumentMap"
 export * from "./classes/DocumentParser"
