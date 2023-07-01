@@ -1,0 +1,37 @@
+{
+  "name": "@janwuesten/firebase-typescript",
+  "version": "2.0.0",
+  "description": "Firebase helper classes to use firebase with typescript supporting firebase for web, firebase admin and firebaes for react native",
+  "main": "lib/index.js",
+  "scripts": {
+    "watch": "tsc -w",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/janwuesten/firebase-typescript.git"
+  },
+  "keywords": [
+    "firebase",
+    "firebase-admin",
+    "firestore",
+    "react-native",
+    "typescript",
+    "helper"
+  ],
+  "author": "Jan Wüsten",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/janwuesten/firebase-typescript/issues"
+  },
+  "homepage": "https://github.com/janwuesten/firebase-typescript#readme",
+  "devDependencies": {
+    "@react-native-firebase/firestore": "^18.1.0",
+    "firebase": "^9.23.0",
+    "firebase-admin": "^11.9.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^4.9.5"
+  }
+}

@@ -1,5 +1,5 @@
 node_modules
 lib/
 *.tgz
-*.json
+serviceAccountKey.json
 .DS_STORE

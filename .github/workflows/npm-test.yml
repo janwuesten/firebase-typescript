@@ -19,15 +19,12 @@ jobs:
           registry-url: https://registry.npmjs.org/
           
       - name: Install dependencies
-        working-directory: ./
         run: npm ci
 
       - name: Write serviceAccountKey.json
         run: 'echo "$FIREBASE_SERVICE_ACCOUNT" >> serviceAccountKey.json'
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{secrets.FIREBASE_SERVICE_ACCOUNT}}
-          
-        
+
       - name: Run test
-        working-directory: ./
         run: npm run test
