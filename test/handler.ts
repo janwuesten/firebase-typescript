@@ -1,46 +1,51 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { AddDocResult, AdminDocumentBatchHandler, AdminDocumentClassHandler, CollectionRefResult, CommitResult, DeleteDocResult, DocRefResult, DocumentData, GetDocResult, SetDocResult, UpdateDocResult } from "../src"
-import { SetOptions, WriteBatch } from "../src/firestore/types/FirestoreTypes";
+import {
+  AdminDocumentBatchHandler,
+  AdminDocumentClassHandler,
+  AdminWriteBatch,
+  AdminDocumentData,
+  AdminDocumentReference,
+  AdminCollectionReference,
+  AdminSetOptions
+} from "../src"
 
 export class DocumentHandler implements AdminDocumentClassHandler {
-  collection(name: string): CollectionRefResult {
+  collection(name: string) {
     return getFirestore().collection(name)
   }
-  getDoc(ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>): GetDocResult {
+  getDoc(ref: AdminDocumentReference<AdminDocumentData>) {
     return ref.get()
   }
-  addDoc(collectionRef: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>, data: Partial<unknown>): AddDocResult {
+  addDoc(collectionRef: AdminCollectionReference<AdminDocumentData>, data: Partial<unknown>) {
     return collectionRef.add(data)
   }
-  setDoc(ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, data: Partial<unknown>, options: SetOptions): SetDocResult {
+  setDoc(ref: AdminDocumentReference<AdminDocumentData>, data: Partial<unknown>, options: AdminSetOptions) {
     return ref.set(data, options)
   }
-  updateDoc(ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, data: Partial<unknown>): UpdateDocResult {
+  updateDoc(ref: AdminDocumentReference<AdminDocumentData>, data: Partial<unknown>) {
     return ref.update(data)
   }
-  deleteDoc(ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>): DeleteDocResult {
+  deleteDoc(ref: AdminDocumentReference<AdminDocumentData>) {
     return ref.delete()
   }
-  doc(ref: FirebaseFirestore.CollectionReference<FirebaseFirestore.DocumentData>, id: string): DocRefResult {
+  doc(ref: AdminCollectionReference<AdminDocumentData>, id: string) {
     return ref.doc(id)
   }
-
 }
 export class BatchHandler implements AdminDocumentBatchHandler {
-  create(): WriteBatch {
+  create() {
     return getFirestore().batch()
   }
-  set(batch: FirebaseFirestore.WriteBatch, ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, data: DocumentData): void {
+  set(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>, data: AdminDocumentData) {
     batch.set(ref, data)
   }
-  update(batch: FirebaseFirestore.WriteBatch, ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>, data: DocumentData): void {
+  update(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>, data: AdminDocumentData) {
     batch.update(ref, data)
   }
-  delete(batch: FirebaseFirestore.WriteBatch, ref: FirebaseFirestore.DocumentReference<FirebaseFirestore.DocumentData>): void {
+  delete(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>) {
     batch.delete(ref)
   }
-  commit(batch: FirebaseFirestore.WriteBatch): CommitResult {
+  commit(batch: AdminWriteBatch) {
     return batch.commit()
   }
-  
 }
