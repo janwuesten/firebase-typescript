@@ -90,7 +90,7 @@ export abstract class DocumentClass extends DocumentParser {
       throw new Error("handler not defined. Define with defineHandler()")
     }
     const doc = await this.__handlerDefinition.getDoc(this.ref)
-    if (!doc.exists) {
+    if (typeof doc.exists == "function" ? !doc.exists() : !doc.exists) {
       return false
     }
     await this.fromData(doc.data()!)
