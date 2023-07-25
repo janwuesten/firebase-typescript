@@ -148,7 +148,7 @@ export abstract class DocumentParser {
       await listener.listener()
     }))
     for (const definition of this._definitions) {
-      if (!(definition._remoteField in data) || definition._remoteField == null) {
+      if (data == null || !(definition._remoteField in data) || definition._remoteField == null) {
         const _defaultValue = definition._defaultValue
         if (typeof _defaultValue == "function") {
           self[definition._field] = _defaultValue()
