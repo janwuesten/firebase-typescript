@@ -1,7 +1,7 @@
 import { DocumentParser, DocumentParserDefinition, DocumentParserListener } from "./DocumentParser"
 import { CollectionDefine, DocumentDefine, EventDefine, HandlerDefine } from "../types/DefineTypes"
 import { DocumentClassHandler } from "./DocumentClassHandler"
-import { CollectionReference, DocumentReference, SetOptions } from "../types/FirestoreTypes"
+import { CollectionReference, SetOptions } from "../types/FirestoreTypes"
 
 export interface DocumentClassDefineProps {
   define: DocumentDefine
@@ -12,7 +12,7 @@ export interface DocumentClassDefineProps {
 export abstract class DocumentClass extends DocumentParser {
   id: string
   private _collectionDefinition: (() => CollectionReference) | null = null
-  private __handlerDefinition: DocumentClassHandler<DocumentReference, CollectionReference> | null = null
+  private __handlerDefinition: DocumentClassHandler | null = null
 
   constructor(id: string = "") {
     super()

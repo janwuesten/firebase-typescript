@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore"
 import { DocumentMap } from "./DocumentMap"
 import { DocumentData, FieldType } from "../types/DocumentTypes"
 import { EventDefineCallback } from "../types/DefineTypes"
@@ -186,7 +185,11 @@ export abstract class DocumentParser {
       } else {
         switch (definition._type) {
           case "timestamp":
-            self[definition._field] = (data[definition._remoteField] as Timestamp).toDate()
+            if (typeof data[definition._remoteField] === "object" && typeof data[definition._remoteField].toDate == "function") {
+              self[definition._field] = data[definition._remoteField].toDate()
+            } else {
+              throw new Error(`field ${definition._field} is not a timestamp`)
+            }
             break
           case "map":
             if (!definition._defineMap) {

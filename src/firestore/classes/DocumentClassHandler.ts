@@ -1,43 +1,39 @@
 import {
-  FirestoreDocumentData,
   DocumentReference,
   DocumentSnapshot,
   CollectionReference,
   SetOptions,
-  WebDocumentReference,
-  WebCollectionReference,
-  AdminDocumentReference,
-  AdminCollectionReference,
-  AdminWriteResult,
-  ReactNativeDocumentReference,
-  ReactNativeCollectionReference,
-  WriteBatch
+  WriteBatch,
+  WriteResult,
+  FirestoreDocumentData
 } from "../types/FirestoreTypes"
 
 export type CollectionRefResult = CollectionReference
-export type GetDocResult = Promise<DocumentSnapshot<FirestoreDocumentData>>
-export type AddDocResult = Promise<DocumentReference<Partial<unknown>>>
-export type SetDocResult = Promise<void> | Promise<AdminWriteResult>
-export type UpdateDocResult = Promise<void> | Promise<AdminWriteResult>
-export type DeleteDocResult = Promise<void> | Promise<AdminWriteResult>
-export type DocRefResult = DocumentReference<FirestoreDocumentData>
+export type GetDocResult = Promise<DocumentSnapshot>
+export type AddDocResult = Promise<DocumentReference>
+export type SetDocResult = Promise<WriteResult>
+export type UpdateDocResult = Promise<WriteResult>
+export type DeleteDocResult = Promise<WriteResult>
+export type DocRefResult = DocumentReference
 export type BatchResult = WriteBatch
 
-export interface DocumentClassHandler<DR extends DocumentReference, CR extends CollectionReference> {
+export interface DocumentClassHandler {
   collection(name: string): CollectionRefResult
-  getDoc(ref: DR): GetDocResult
-  addDoc(collectionRef: CR, data: Partial<unknown>): AddDocResult
-  setDoc(ref: DR, data: Partial<unknown>, options: SetOptions): SetDocResult
-  updateDoc(ref: DR, data: Partial<unknown>): UpdateDocResult
-  deleteDoc(ref: DR): DeleteDocResult
-  doc(ref: CR, id: string): DocRefResult
+  getDoc(ref: DocumentReference): GetDocResult
+  addDoc(collectionRef: CollectionReference, data: FirestoreDocumentData): AddDocResult
+  setDoc(ref: DocumentReference, data: FirestoreDocumentData, options: SetOptions): SetDocResult
+  updateDoc(ref: DocumentReference, data: FirestoreDocumentData): UpdateDocResult
+  deleteDoc(ref: DocumentReference): DeleteDocResult
+  doc(ref: CollectionReference, id: string): DocRefResult
 }
-export interface WebDocumentClassHandler extends DocumentClassHandler<WebDocumentReference, WebCollectionReference> {
+
+// Legacy exports:
+export interface WebDocumentClassHandler extends DocumentClassHandler {
 
 }
-export interface AdminDocumentClassHandler extends DocumentClassHandler<AdminDocumentReference, AdminCollectionReference> {
+export interface AdminDocumentClassHandler extends DocumentClassHandler {
 
 }
-export interface ReactNativeDocumentClassHandler extends DocumentClassHandler<ReactNativeDocumentReference, ReactNativeCollectionReference> {
+export interface ReactNativeDocumentClassHandler extends DocumentClassHandler {
 
 }
