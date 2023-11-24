@@ -17,26 +17,26 @@ class TypeTestMap extends DocumentMap {
   }
 }
 class TypeTest extends DocumentClass {
-  string: string = "default value test"
-  number: number = 0
-  boolean: boolean = false
-  geopoint: GeoPoint = new GeoPoint(0, 0)
-  stringArray: string[] = []
-  map: TypeTestMap = new TypeTestMap()
-  mapArray: TypeTestMap[] = []
-  mappable: Mappable<TypeTestMap> = new Mappable()
-  timestamp: Date = new Date()
+  string!: string
+  number!: number
+  boolean!: boolean
+  geopoint!: GeoPoint
+  stringArray!: string[]
+  map!: TypeTestMap
+  mapArray!: TypeTestMap[]
+  mappable!: Mappable<TypeTestMap>
+  timestamp!: Date
 
   definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps): void {
-    define("string", "string").defaultValue(() => this.string)
-    define("number", "number").defaultValue(10)
-    define("boolean", "boolean")
-    define("geopoint", "geopoint")
-    define("stringArray", "array")
-    define("map", "map").defineMap(() => new TypeTestMap())
-    define("mapArray", "mapArray").defineMap(() => new TypeTestMap())
-    define("mappable", "mappable").defineMap(() => new TypeTestMap())
-    define("timestamp", "timestamp")
+    define<typeof this.string>("string", "string", "default value test")
+    define<typeof this.number>("number", "number", 10)
+    define<typeof this.boolean>("boolean", "boolean", false)
+    define<typeof this.geopoint>("geopoint", "geopoint", new GeoPoint(0, 0))
+    define<typeof this.stringArray>("stringArray", "array", [])
+    define<typeof this.map>("map", "map", new TypeTestMap()).defineMap(() => new TypeTestMap())
+    define<typeof this.mapArray>("mapArray", "mapArray", []).defineMap(() => new TypeTestMap())
+    define<typeof this.mappable>("mappable", "mappable", new Mappable<TypeTestMap>()).defineMap(() => new TypeTestMap())
+    define<typeof this.timestamp>("timestamp", "timestamp", new Date())
 
     defineCollection(() => getFirestore().collection("typetest"))
     defineHandler(new DocumentHandler())
@@ -121,14 +121,14 @@ test("mappable", async () => {
 })
 test("default values", async () => {
   const typeTest = new TypeTest("wrong id")
-  expect(typeTest.number).toBe(0)
+  expect(typeTest.number).toBe(10)
   expect(typeTest.string).toBe("default value test")
   await typeTest.fromData({})
   expect(typeTest.string).toBe("default value test")
   expect(typeTest.number).toBe(10)
   typeTest.string = "test"
   await typeTest.fromData({})
-  expect(typeTest.string).toBe("test")
+  expect(typeTest.string).toBe("default value test")
 })
 test("clean", async () => {
   const typeTests = await new DocumentFactory(() => new TypeTest).fromQuerySnapshot(await getFirestore().collection("typetest").get())

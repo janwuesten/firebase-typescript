@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore"
 import { DocumentMap } from "./DocumentMap"
 import { DocumentData, FieldType } from "../types/DocumentTypes"
 import { EventDefineCallback } from "../types/DefineTypes"
@@ -13,11 +12,11 @@ export class DocumentParserListener {
     this.listener = listener
   }
 }
-export class DocumentParserDefinition {
+export class DocumentParserDefinition<T> {
   private __field: string
   private __remoteField: string
   private __type: FieldType
-  private __defaultValue: unknown = null
+  private __defaultValue: (() => T) | T | null = null
   private __defineMap: ((data: DocumentData) => DocumentMap) | null = null
   private __readonly: boolean = false
 
@@ -40,13 +39,16 @@ export class DocumentParserDefinition {
     return this.__readonly
   }
 
-  constructor(prop: string, fieldType: FieldType) {
+  constructor(prop: string, fieldType: FieldType, defaultValue?: T) {
     this.__field = prop
     this.__remoteField = prop
     this.__type = fieldType
+    if (defaultValue != undefined) {
+      this.__defaultValue = defaultValue
+    }
   }
 
-  defaultValue(defaultValue: unknown) {
+  defaultValue(defaultValue: T) {
     this.__defaultValue = defaultValue
     return this
   }
@@ -64,8 +66,33 @@ export class DocumentParserDefinition {
   }
 }
 export abstract class DocumentParser {
-  protected _definitions: DocumentParserDefinition[] = []
+  protected _definitions: DocumentParserDefinition<any>[] = []
   protected _listeners: DocumentParserListener[] = []
+
+  optionalDefault<T>(field: string) {
+    for (const definition of this._definitions) {
+      if (definition._field == field) {
+        if (typeof definition._defaultValue == "function") {
+          return definition._defaultValue() as T
+        } else {
+          return definition._defaultValue as T
+        }
+      }
+    }
+    return null
+  }
+  requiredDefault<T>(field: string) {
+    for (const definition of this._definitions) {
+      if (definition._field == field) {
+        if (typeof definition._defaultValue == "function") {
+          return definition._defaultValue() as T
+        } else {
+          return definition._defaultValue as T
+        }
+      }
+    }
+    throw new Error(`Field ${field} not defined`)
+  }
 
   constructor() {
 
@@ -158,7 +185,11 @@ export abstract class DocumentParser {
       } else {
         switch (definition._type) {
           case "timestamp":
-            self[definition._field] = (data[definition._remoteField] as Timestamp).toDate()
+            if (typeof data[definition._remoteField] === "object" && typeof data[definition._remoteField].toDate == "function") {
+              self[definition._field] = data[definition._remoteField].toDate()
+            } else {
+              throw new Error(`field ${definition._field} is not a timestamp`)
+            }
             break
           case "map":
             if (!definition._defineMap) {
