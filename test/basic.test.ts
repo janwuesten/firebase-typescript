@@ -10,8 +10,8 @@ initializeApp({
 })
 
 class Country extends DocumentClass {
-  name: string = this.requiredDefault("name")
-  code: string = this.requiredDefault("code")
+  name!: string
+  code!: string
 
   definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps): void {
     define<typeof this.name>("name", "string")

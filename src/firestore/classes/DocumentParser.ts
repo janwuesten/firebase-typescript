@@ -69,31 +69,6 @@ export abstract class DocumentParser {
   protected _definitions: DocumentParserDefinition<any>[] = []
   protected _listeners: DocumentParserListener[] = []
 
-  optionalDefault<T>(field: string) {
-    for (const definition of this._definitions) {
-      if (definition._field == field) {
-        if (typeof definition._defaultValue == "function") {
-          return definition._defaultValue() as T
-        } else {
-          return definition._defaultValue as T
-        }
-      }
-    }
-    return null
-  }
-  requiredDefault<T>(field: string) {
-    for (const definition of this._definitions) {
-      if (definition._field == field) {
-        if (typeof definition._defaultValue == "function") {
-          return definition._defaultValue() as T
-        } else {
-          return definition._defaultValue as T
-        }
-      }
-    }
-    throw new Error(`Field ${field} not defined`)
-  }
-
   constructor() {
 
   }
