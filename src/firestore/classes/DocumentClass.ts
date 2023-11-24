@@ -18,8 +18,8 @@ export abstract class DocumentClass extends DocumentParser {
     super()
     this.id = id
     this.definition({
-      define: (propName, propType) => {
-        const _definition = new DocumentParserDefinition(propName, propType)
+      define: (propName, propType, defaultValue) => {
+        const _definition = new DocumentParserDefinition(propName, propType, defaultValue)
         this._definitions.push(_definition)
         return _definition
       },
@@ -42,6 +42,15 @@ export abstract class DocumentClass extends DocumentParser {
         }
       }
     })
+    const self = this as any
+    for (const definition of this._definitions) {
+      const _defaultValue = definition._defaultValue
+        if (typeof _defaultValue == "function") {
+          self[definition._field] = _defaultValue()
+        } else {
+          self[definition._field] = _defaultValue
+        }
+    }
   }
   abstract definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps): void
 
