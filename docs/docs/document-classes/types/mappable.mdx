@@ -1,0 +1,69 @@
+---
+sidebar_position: 4
+---
+
+# Mappable
+
+## What is a Mappable?
+
+A `Mappable` is a extension for the type `Map<string, T>`. It allows you to store simple types or document maps inside a `Mappable` and access them using a `string`.
+
+While you could also use `Map<string, T>` if you want a `Map` with a `string` as a key, `Mappable` provides some useful extensions that can make development easier for you.
+`Mappable` also allows the usage of [document maps](/docs/document-classes/types/document-map) within a `Map`, this is not possible with the default `Map<string, T>` syntax.
+
+## Simple Mappables
+
+While `Mappable`s are designed to contain `DocumentMap`s, simple mappables are still there to ensure you can also use `Mappable`s extensions with simple types.
+
+A simple Mappable is a `Mappable` that uses simple types such as `string`, `number`, `boolean` or `GeoPoint` as a value type.
+
+:::warning
+Note that `timestamp` / `Date` is not supported at the moment. When using `timestamp` / `Date` you need to use the Timestamp type from the Firebase SDK.
+:::
+
+```ts
+// highlight-start
+import { DocumentClass, DocumentClassDefineProps, Mappable } from "@janwuesten/firebase-typescript"
+// highlight-end
+
+export class City extends DocumentClass {
+  // highlight-start
+  mySimpleMappable!: Mappable<string>
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.mySimpleMappable>("mySimpleMappable", "simpleMappable", new Mappable<string>())
+    // highlight-end
+  }
+}
+```
+
+## Document Map Mappables
+
+```ts
+// highlight-start
+import { DocumentClass, DocumentClassDefineProps, Mappable } from "@janwuesten/firebase-typescript"
+// highlight-end
+
+export class City extends DocumentClass {
+  // highlight-start
+  myMappable!: Mappable<MyDocumentMap>
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.myMappable>("myMappable", "mappable", new Mappable<MyDocumentMap>())
+    // highlight-end
+  }
+}
+
+// highlight-start
+export class MyDocumentMap extends DocumentMap {
+
+  definition({ define }: DocumentMapDefineProps) {
+
+  }
+}
+// highlight-end
+```

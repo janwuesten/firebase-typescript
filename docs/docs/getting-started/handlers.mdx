@@ -1,0 +1,196 @@
+---
+sidebar_position: 2
+---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
+# Configure handlers
+
+## Basics
+
+A document class handler connects Firebase TypeScript with your used Firebase SDK. It defines, how the classes are read and stored to your Firestore instance.
+
+This concept allows the Firebase TypeScript library to be independent of the Firebase SDK used and allows that the library works even if your Firebase SDK updates to a newer version.
+
+The good thing about document class handlers is that you probably don't need to worry about them except of using one of the pre defined document class handlers below and adding them to your project.
+
+## Example document class handlers 
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+    ```ts title="classes/DocumentHandler.ts"
+    import {
+      WebDocumentBatchHandler,
+      WebDocumentClassHandler,
+      WebWriteBatch,
+      WebDocumentReference,
+      WebDocumentData,
+      WebCollectionReference,
+      WebSetOptions
+    } from "@janwuesten/firebase-typescript"
+    import {
+      collection,
+      getDoc,
+      addDoc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      doc,
+      getFirestore,
+      writeBatch
+    } from "firebase/firestore"
+
+    export class DocumentHandler implements WebDocumentClassHandler {
+      collection(name: string) {
+        return collection(getFirestore(), name)
+      }
+      getDoc(ref: WebDocumentReference<WebDocumentData>) {
+        return getDoc(ref)
+      }
+      addDoc(collectionRef: WebCollectionReference<WebDocumentData>, data: Partial<unknown>) {
+        return addDoc(collectionRef, data)
+      }
+      setDoc(ref: WebDocumentReference<WebDocumentData>, data: Partial<unknown>, options: WebSetOptions) {
+        return setDoc(ref, data, options)
+      }
+      updateDoc(ref: WebDocumentReference<WebDocumentData>, data: Partial<unknown>) {
+        return updateDoc(ref, data)
+      }
+      deleteDoc(ref: WebDocumentReference<WebDocumentData>) {
+        return deleteDoc(ref)
+      }
+      doc(ref: WebCollectionReference<WebDocumentData>, id: string) {
+        return doc(ref, id)
+      }
+    }
+    export class BatchHandler implements WebDocumentBatchHandler {
+      create() {
+        return writeBatch(getFirestore())
+      }
+      set(batch: WebWriteBatch, ref: WebDocumentReference<WebDocumentData>, data: WebDocumentData) {
+        batch.set(ref, data)
+      }
+      update(batch: WebWriteBatch, ref: WebDocumentReference<WebDocumentData>, data: WebDocumentData) {
+        batch.update(ref, data)
+      }
+      delete(batch: WebWriteBatch, ref: WebDocumentReference<WebDocumentData>) {
+        batch.delete(ref)
+      }
+      commit(batch: WebWriteBatch) {
+        return batch.commit()
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+    ```ts title="classes/DocumentHandler.ts"
+    import {
+      AdminDocumentBatchHandler,
+      AdminDocumentClassHandler,
+      AdminWriteBatch,
+      AdminDocumentData,
+      AdminDocumentReference,
+      AdminCollectionReference,
+      AdminSetOptions
+    } from "../src"
+    import { getFirestore } from "firebase-admin/firestore"
+
+    export class DocumentHandler implements AdminDocumentClassHandler {
+      collection(name: string) {
+        return getFirestore().collection(name)
+      }
+      getDoc(ref: AdminDocumentReference<AdminDocumentData>) {
+        return ref.get()
+      }
+      addDoc(collectionRef: AdminCollectionReference<AdminDocumentData>, data: Partial<unknown>) {
+        return collectionRef.add(data)
+      }
+      setDoc(ref: AdminDocumentReference<AdminDocumentData>, data: Partial<unknown>, options: AdminSetOptions) {
+        return ref.set(data, options)
+      }
+      updateDoc(ref: AdminDocumentReference<AdminDocumentData>, data: Partial<unknown>) {
+        return ref.update(data)
+      }
+      deleteDoc(ref: AdminDocumentReference<AdminDocumentData>) {
+        return ref.delete()
+      }
+      doc(ref: AdminCollectionReference<AdminDocumentData>, id: string) {
+        return ref.doc(id)
+      }
+    }
+    export class BatchHandler implements AdminDocumentBatchHandler {
+      create() {
+        return getFirestore().batch()
+      }
+      set(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>, data: AdminDocumentData) {
+        batch.set(ref, data)
+      }
+      update(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>, data: AdminDocumentData) {
+        batch.update(ref, data)
+      }
+      delete(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>) {
+        batch.delete(ref)
+      }
+      commit(batch: AdminWriteBatch) {
+        return batch.commit()
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+    ```ts title="classes/DocumentHandler.ts"
+    import {
+      ReactNativeDocumentReference,
+      ReactNativeCollectionReference,
+      ReactNativeDocumentClassHandler,
+      ReactNativeDocumentBatchHandler,
+      DocumentData,
+      ReactNativeWriteBatch,
+      SetOptions
+    } from "@janwuesten/firebase-typescript"
+    import firestore from "@react-native-firebase/firestore"
+
+    export class DocumentHandler implements ReactNativeDocumentClassHandler {
+      collection(name: string) {
+        return firestore().collection(name)
+      }
+      getDoc(ref: ReactNativeDocumentReference) {
+        return ref.get()
+      }
+      addDoc(collectionRef: ReactNativeCollectionReference, data: Partial<unknown>) {
+        return collectionRef.add(data)
+      }
+      setDoc(ref: ReactNativeDocumentReference, data: Partial<unknown>, options: SetOptions) {
+        return ref.set(data, options)
+      }
+      updateDoc(ref: ReactNativeDocumentReference, data: Partial<unknown>) {
+        return ref.update(data)
+      }
+      deleteDoc(ref: ReactNativeDocumentReference) {
+        return ref.delete()
+      }
+      doc(ref: ReactNativeCollectionReference, id: string) {
+        return ref.doc(id)
+      }
+    }
+    export class BatchHandler implements ReactNativeDocumentBatchHandler {
+      create() {
+        return firestore().batch()
+      }
+      set(batch: ReactNativeWriteBatch, ref: ReactNativeDocumentReference, data: DocumentData) {
+        batch.set(ref, data)
+      }
+      update(batch: ReactNativeWriteBatch, ref: ReactNativeDocumentReference, data: DocumentData) {
+       batch.update(ref, data)
+      }
+      delete(batch: ReactNativeWriteBatch, ref: ReactNativeDocumentReference) {
+        batch.delete(ref)
+      }
+      commit(batch: ReactNativeWriteBatch) {
+        return batch.commit()
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>

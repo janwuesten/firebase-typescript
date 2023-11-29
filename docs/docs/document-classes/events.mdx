@@ -1,0 +1,62 @@
+---
+sidebar_position: 3
+---
+
+# Events
+
+## Defining events
+
+With events you can do actions before or after reading and writing of document data. Examples of such behavior:
+- Writing fields that require updates everytime the document is updated (like a lowercased version of a name or a array for searching).
+- Getting documents out of a subcollection when reading a document.
+
+You can define events with the `defineEvent` method that you an optionally import when defining your `definition` method.
+
+Available events are:
+- `beforeWrite`: will be fired before your document is stored to the Firestore database.
+- `beforeRead`: will be fired before your document is read from the Firestore database.
+- `afterWrite`: will be fired after the write to your Firestore database is complete.
+- `afterRead`: will be fired after the read from your Firestore database is complete.
+
+```ts
+export class City extends DocumentClass {
+  name!: string
+  lowercasedName!: string
+
+  // highlight-start
+  definition({ define, defineCollection, defineHandler, defineEvent }: DocumentClassDefineProps): void {
+    // highlight-end
+    define("name", "string", "")
+    define("lowercasedName", "string", "")
+
+    // highlight-start
+    defineEvent("beforeWrite", () => {
+      this.lowercasedName = this.name.toLowerCase()
+    })
+    // highlight-end
+  }
+}
+```
+
+## Async events
+
+Events support async event handlers if you need to execute async actions or Firestore datbase actions.
+Keep in mind that async event handlers will slow down reading or writing of document classes as the handler needs to be executed first.
+
+```ts
+export class City extends DocumentClass {
+  name!: string
+  hashedName!: string
+
+  definition({ define, defineCollection, defineHandler, defineEvent }: DocumentClassDefineProps): void {
+    define("name", "string", "")
+    define("hashedName", "string", "")
+
+    // highlight-start
+    defineEvent("beforeWrite", async () => {
+      this.hashedName = await promiseBasedMethod(this.name)
+    })
+    // highlight-end
+  }
+}
+```

@@ -1,0 +1,119 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
+# Basic types
+
+## String, Numbers and Booleans
+
+Strings can easily be defined by using `string`, `number` or `boolean` as a type when using the `define` method.
+
+```ts
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class MyDocumentClass extends DocumentClass {
+  // highlight-start
+  myString!: string
+  myNumber!: number
+  myBoolean!: boolean
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.myString>("myString", "string", "my default value")
+    define<typeof this.myNumber>("myNumber", "number", 0)
+    define<typeof this.myBoolean>("myBoolean", "boolean", false)
+    // highlight-end
+  }
+}
+```
+
+## Date and Timestamps
+
+Dates can be used by defining a prop of the type `Date` and defining the prop with the type `timestamp` when using the `define` method.
+
+```ts
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class MyDocumentClass extends DocumentClass {
+  // highlight-start
+  myTimestamp!: Date
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.myTimestamp>("myTimestamp", "timestamp", new Date())
+    // highlight-end
+  }
+}
+```
+
+## Geopoints
+
+Geopoints can be used with the default `GeoPoint` class provided by the Firebase SDK and using the type `geopoint` when using the `define` method.
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+    ```ts
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    // highlight-start
+    import { GeoPoint } from "firebase/firestore"
+    // highlight-end
+
+    export class MyDocumentClass extends DocumentClass {
+      // highlight-start
+      myGeoPoint!: GeoPoint
+      // highlight-end
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        // highlight-start
+        define<typeof this.myGeoPoint>("myGeoPoint", "geopoint", new GeoPoint(0, 0))
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+    ```ts
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    // highlight-start
+    import { GeoPoint } from "firebase-admin/firestore"
+    // highlight-end
+
+    export class MyDocumentClass extends DocumentClass {
+      // highlight-start
+      myGeoPoint!: GeoPoint
+      // highlight-end
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        // highlight-start
+        define<typeof this.myGeoPoint>("myGeoPoint", "geopoint", new GeoPoint(0, 0))
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+    ```ts
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    // highlight-start
+    import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore"
+    // highlight-end
+
+    export class MyDocumentClass extends DocumentClass {
+      // highlight-start
+      myGeoPoint!: FirebaseFirestoreTypes.GeoPoint
+      // highlight-end
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        // highlight-start
+        define<typeof this.myGeoPoint>("myGeoPoint", "geopoint", new FirebaseFirestoreTypes.GeoPoint(0, 0))
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>

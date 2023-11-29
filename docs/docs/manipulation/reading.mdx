@@ -1,0 +1,46 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
+# Reading documents
+
+## Reading a document by ID
+
+Reading documents by the document ID requires that you know the document ID.
+It is the most simple way of reading documents from your Firestore database.
+
+Note that reading non existing documents does not throw an error. Instead it returns `false` on the `get` method.
+When a document is not found, the default values will be used for the properties.
+
+```ts
+try {
+  const city = new City("document id")
+  if (await city.get()) {
+    // document does exist
+  } else {
+    // document does not exist
+  }
+} catch (err) {
+  console.warn(err)
+}
+```
+
+:::tip
+If you want to throw an error when a document is not found, you can always add a throw statement to the else block.
+:::
+
+## Search (query) for documents
+
+To search (query) for documents, you first need to create a query snapshot with your Firebase SDK that you can then pass to a `DocumentFactory` that will then return a array of found document classes.
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+  </TabItem>
+</Tabs>

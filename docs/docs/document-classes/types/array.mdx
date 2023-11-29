@@ -1,0 +1,65 @@
+---
+sidebar_position: 3
+---
+
+# Arrays
+
+## Define simple array
+
+Simple arrays are arrays that contains basic types like an array of strings, numbers or booleans.
+Simple arrays can simply be defined by using `array` as a type within the `define` method. You do not need to specify the specific type inside the `define` method.
+
+```ts
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  // highlight-start
+  myArray!: string[]
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.myArray>("myArray", "array", [])
+    // highlight-end
+  }
+}
+```
+
+## Define map array
+
+If you need to define an array of [document maps](/docs/document-classes/types/document-map) you can use the type `mapArray` inside the `define` method.
+Like the definition of document maps you need to define the constructor using `defineMap`. The `defineMap` constructor will be executed for each item inside the array.
+
+```ts
+import {
+  DocumentClass,
+  DocumentClassDefineProps,
+  DocumentMap,
+  DocumentMapDefineProps
+} from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  // highlight-start
+  schools!: School
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.schools>("schools", "mapArray", []).defineMap(() => new School())
+    // highlight-end
+  }
+}
+
+export type SchoolType =  "secondary-school" | "high-school" | "university"
+export class School extends DocumentMap {
+  street!: string
+  name!: string
+  type!: SchoolType
+
+  definition({ define }: DocumentMapDefineProps) {
+    define<typeof this.street>("street", "string", "")
+    define<typeof this.name>("name", "string", "")
+    define<typeof this.type>("type", "string", "university")
+  }
+}
+```
