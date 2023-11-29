@@ -1,0 +1,47 @@
+---
+sidebar_position: 3
+---
+
+# Performance
+
+Using Firebase TypeScript will obviously make a small performance impact.
+This is why we made a small information about when to use Firebase TypeScript and when to better not use it as well as some metrics to let you decide better.
+
+## When to use Firebase TypeScript
+
+Firebase TypeScript is perfect if you want a consistent, readable, maintainable and shareable class pattern to use with your Firestore database.
+As the Firestore database does not provide any scheme your code is the only instance defining your scheme.
+So using this sort of class pattern is useful to reduce bugs and improve your product stability for the end user.
+
+## When not to use Firebase TypeScript
+
+As Firebase TypeScript has some performance impact especially when using a huge amount of class documents at the same time
+using it in heavy tasks that are reading or writing heavy amount of documents (> 10000 or more) isn't ideal.
+
+Firebase TypeScript is also not ideal for applications where every 0,01ms counts - for example in Games.
+
+## Performance metrics
+
+To provide some data, we have compared "native performance" (using plain JavaScript Objects) with the usage of `DocumentClass`.
+The `DocumentClass` included one `DocumentMap`.
+
+:::note
+Keep in mind that the result vary depending on the system, class structure and other factors.
+Those performance impacts are only for writing and reading documents and not for working with the documents.
+:::
+
+| Test | Runs | Average time | Total time |
+|--|--|--|--|
+| Native / no classes | 1 | < 1ms | < 1ms |
+| `DocumentClass` write | 1 | < 1ms | < 1ms |
+| `DocumentClass` read | 1 | < 1ms | < 1ms |
+| Native / no classes | 100 | 1ms | 0.001ms |
+| `DocumentClass` write | 100 | 1ms | 0.001ms |
+| `DocumentClass` read | 100 | 1ms | 0.001ms |
+| Native / no classes | 1000 | 0.001ms | 1ms |
+| `DocumentClass` write | 1000 | 0.003 | 3ms |
+| `DocumentClass` read | 1000 | 0.015 | 15ms |
+
+:::info
+In a future release we plan to provide a `LightweightDocumentClass` and `LightweightDocumentMap` with less features than `DocumentClass` and `DocumentMap` but near native performance.
+:::
