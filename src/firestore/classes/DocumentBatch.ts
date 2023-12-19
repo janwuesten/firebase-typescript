@@ -1,4 +1,4 @@
-import { DocumentReference, WriteBatch } from "../types/FirestoreTypes"
+import { WriteBatch } from "../types/FirestoreTypes"
 import { DocumentBatchHandler } from "./DocumentBatchHandler"
 import { DocumentClass } from "./DocumentClass"
 
@@ -9,14 +9,14 @@ export class DocumentBatch {
   private _options: DocumentBatchOptions = {
     split: false
   }
-  private _handler: DocumentBatchHandler<WriteBatch, DocumentReference>
+  private _handler: DocumentBatchHandler
   private _lastBatch: WriteBatch
   private _lastBatchActions: number
   private _maxBatchActions = 500
   private _transactions: Promise<unknown>[] = []
 
 
-  constructor(handler: DocumentBatchHandler<WriteBatch, DocumentReference>, options?: DocumentBatchOptions) {
+  constructor(handler: DocumentBatchHandler, options?: DocumentBatchOptions) {
     this._handler = handler
     this._lastBatch = this._handler.create()
     this._lastBatchActions = 0

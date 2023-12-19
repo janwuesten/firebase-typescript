@@ -25,6 +25,12 @@ export interface DocumentClassHandler {
   updateDoc(ref: DocumentReference, data: FirestoreDocumentData): UpdateDocResult
   deleteDoc(ref: DocumentReference): DeleteDocResult
   doc(ref: CollectionReference, id: string): DocRefResult
+
+  transactionCreate?(transaction: any, ref: DocumentReference, data: FirestoreDocumentData): any
+  transactionDelete?(transaction: any, ref: DocumentReference): any
+  transactionGet?(transaction: any, ref: DocumentReference): GetDocResult
+  transactionSet?(transaction: any, ref: DocumentReference, data: FirestoreDocumentData, options?: SetOptions): any
+  transactionUpdate?(transaction: any, ref: DocumentReference, data: FirestoreDocumentData): any
 }
 
 // Legacy exports:

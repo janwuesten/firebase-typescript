@@ -1,20 +1,20 @@
 import { DocumentData } from "../types/DocumentTypes"
-import { AdminDocumentReference, AdminWriteBatch, DocumentReference, FirestoreDocumentData, ReactNativeDocumentReference, ReactNativeWriteBatch, WebDocumentReference, WebWriteBatch, WriteBatch } from "../types/FirestoreTypes"
+import { DocumentReference, WriteBatch } from "../types/FirestoreTypes"
 
 export type CommitResult = Promise<unknown>
-export interface DocumentBatchHandler<WB extends WriteBatch, DR extends DocumentReference> {
+export interface DocumentBatchHandler {
   create(): WriteBatch
-  set(batch: WB, ref: DR, data: DocumentData): void
-  update(batch: WB, ref: DR, data: DocumentData): void
-  delete(batch: WB, ref: DR): void
-  commit(batch: WB): CommitResult
+  set(batch: WriteBatch, ref: DocumentReference, data: DocumentData): void
+  update(batch: WriteBatch, ref: DocumentReference, data: DocumentData): void
+  delete(batch: WriteBatch, ref: DocumentReference): void
+  commit(batch: WriteBatch): CommitResult
 }
-export interface WebDocumentBatchHandler extends DocumentBatchHandler<WebWriteBatch, WebDocumentReference<FirestoreDocumentData>> {
+export interface WebDocumentBatchHandler extends DocumentBatchHandler {
 
 }
-export interface AdminDocumentBatchHandler extends DocumentBatchHandler<AdminWriteBatch, AdminDocumentReference<FirestoreDocumentData>> {
+export interface AdminDocumentBatchHandler extends DocumentBatchHandler {
 
 }
-export interface ReactNativeDocumentBatchHandler extends DocumentBatchHandler<ReactNativeWriteBatch, ReactNativeDocumentReference<FirestoreDocumentData>> {
+export interface ReactNativeDocumentBatchHandler extends DocumentBatchHandler {
 
 }

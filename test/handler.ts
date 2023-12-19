@@ -1,51 +1,64 @@
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, Transaction, CollectionReference, DocumentReference, WriteBatch, SetOptions } from "firebase-admin/firestore";
 import {
-  AdminDocumentBatchHandler,
-  AdminDocumentClassHandler,
-  AdminWriteBatch,
-  AdminDocumentData,
-  AdminDocumentReference,
-  AdminCollectionReference,
-  AdminSetOptions
+  DocumentBatchHandler,
+  DocumentClassHandler,
+  DocumentData
 } from "../src"
 
-export class DocumentHandler implements AdminDocumentClassHandler {
+
+export class DocumentHandler implements DocumentClassHandler {
   collection(name: string) {
     return getFirestore().collection(name)
   }
-  getDoc(ref: AdminDocumentReference<AdminDocumentData>) {
+  getDoc(ref: DocumentReference) {
     return ref.get()
   }
-  addDoc(collectionRef: AdminCollectionReference<AdminDocumentData>, data: Partial<unknown>) {
+  addDoc(collectionRef: CollectionReference, data: Partial<unknown>) {
     return collectionRef.add(data)
   }
-  setDoc(ref: AdminDocumentReference<AdminDocumentData>, data: Partial<unknown>, options: AdminSetOptions) {
+  setDoc(ref: DocumentReference, data: Partial<unknown>, options: SetOptions) {
     return ref.set(data, options)
   }
-  updateDoc(ref: AdminDocumentReference<AdminDocumentData>, data: Partial<unknown>) {
+  updateDoc(ref: DocumentReference, data: Partial<unknown>) {
     return ref.update(data)
   }
-  deleteDoc(ref: AdminDocumentReference<AdminDocumentData>) {
+  deleteDoc(ref: DocumentReference) {
     return ref.delete()
   }
-  doc(ref: AdminCollectionReference<AdminDocumentData>, id: string) {
+  doc(ref: CollectionReference, id: string) {
     return ref.doc(id)
   }
+
+  transactionCreate(transaction: Transaction, ref: any, data: Partial<unknown>) {
+    return transaction.create(ref, data)
+  }
+  transactionDelete(transaction: Transaction, ref: any) {
+    return transaction.delete(ref)
+  }
+  transactionGet(transaction: Transaction, ref: any) {
+    return transaction.get(ref)
+  }
+  transactionSet(transaction: Transaction, ref: any, data: Partial<unknown>, options: SetOptions) {
+    return transaction.set(ref, data, options)
+  }
+  transactionUpdate(transaction: Transaction, ref: any, data: Partial<unknown>) {
+    return transaction.update(ref, data)
+  }
 }
-export class BatchHandler implements AdminDocumentBatchHandler {
+export class BatchHandler implements DocumentBatchHandler {
   create() {
     return getFirestore().batch()
   }
-  set(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>, data: AdminDocumentData) {
+  set(batch: WriteBatch, ref: DocumentReference, data: DocumentData) {
     batch.set(ref, data)
   }
-  update(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>, data: AdminDocumentData) {
+  update(batch: WriteBatch, ref: DocumentReference, data: DocumentData) {
     batch.update(ref, data)
   }
-  delete(batch: AdminWriteBatch, ref: AdminDocumentReference<AdminDocumentData>) {
+  delete(batch: WriteBatch, ref: DocumentReference) {
     batch.delete(ref)
   }
-  commit(batch: AdminWriteBatch) {
+  commit(batch: WriteBatch) {
     return batch.commit()
   }
 }

@@ -70,7 +70,7 @@ test("deleting documents", async () => {
   await country.delete()
   expect(await new Country(countryID).get()).toBe(false)
 })
-test("clean", async () => {
+test("clean and batch", async () => {
   const countries = await new DocumentFactory(() => new Country).fromQuerySnapshot(await getFirestore().collection("country").get())
   const batch = new DocumentBatch(new BatchHandler())
   for (const country of countries) {
