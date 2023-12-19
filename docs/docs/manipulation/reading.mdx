@@ -34,13 +34,158 @@ If you want to throw an error when a document is not found, you can always add a
 
 ## Search (query) for documents
 
-To search (query) for documents, you first need to create a query snapshot with your Firebase SDK that you can then pass to a `DocumentFactory` that will then return a array of found document classes.
+To search (query) for documents, you first need to create a query snapshot with your Firebase SDK that you can then pass to a `DocumentFactory` with the `fromQuerySnapshot` method that will then return a array of found document classes.
+
+The `DocumentFactory` requires a definition of the `DocumentClass` you are trying to read. This behavior is similar to the `defineMap` method inside the `DocumentClass` `definition` method.
 
 <Tabs>
   <TabItem value="web" label="Web SDK" default>
+    ```ts
+    import { collection, getDocs, getFirestore, query, where } from "firebase/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    const docQuery = query(collection(getFirestore(), "city"), where("capital", "==", true))
+
+    // highlight-start
+    const querySnapshot = await getDocs(docQuery)
+    const capitalCities = await new DocumentFactory(() => new City()).fromQuerySnapshot(querySnapshot)
+    // highlight-end
+    ```
   </TabItem>
   <TabItem value="admin" label="Admin SDK">
+    ```ts
+    import { getFirestore } from "firebase-admin/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    const docQuery = getFirestore().collection("city").where("capital", "==", true)
+
+    // highlight-start
+    const querySnapshot = await docQuery.get()
+    const capitalCities = await new DocumentFactory(() => new City()).fromQuerySnapshot(querySnapshot)
+    // highlight-end
+    ```
   </TabItem>
   <TabItem value="react-native" label="React Native SDK">
+    ```ts
+    import firestore from "@react-native-firebase/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    const docQuery = firestore().collection("city").where("capital", "==", true)
+
+    // highlight-start
+    const querySnapshot = await docQuery.get()
+    const capitalCities = await new DocumentFactory(() => new City()).fromQuerySnapshot(querySnapshot)
+    // highlight-end
+    ```
   </TabItem>
 </Tabs>
+
+## Snapshot listeners
+
+### Single document
+
+When listening to single documents, you first need to create a `snapshotListener` with your used Firebase SDK and pass it to the `DocumentFactory`s `fromSnapshot` method.
+Like with queries, this will return a ready to use `DocumentClass` object you defined within the constructor of the `DocumentFactory` instance.
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+    ```ts
+    import { doc, collection, getFirestore, onSnapshot } from "firebase/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    // highlight-start
+    onSnapshot(doc(collection(getFirestore(), "city"), "city id"), async (snaphot) => {
+      const city = await new DocumentFactory(() => new City()).fromSnapshot(snaphot)
+    })
+    // highlight-end
+    ```
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+    ```ts
+    import { getFirestore } from "firebase-admin/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    // highlight-start
+    getFirestore().collection("city").doc("city id").onSnapshot(async (snaphot) => {
+      const city = await new DocumentFactory(() => new City()).fromSnapshot(snaphot)
+    })
+    // highlight-end
+    ```
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+    ```ts
+    import firestore from "@react-native-firebase/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    // highlight-start
+    firestore.collection("city").doc("city id").onSnapshot(async (snaphot) => {
+      const city = await new DocumentFactory(() => new City()).fromSnapshot(snaphot)
+    })
+    // highlight-end
+    ```
+  </TabItem>
+</Tabs>
+
+
+### Multiple documents (query)
+
+Listening to multiple documents is similar as listening to a single document, with the difference that you pass the snapshot to the `fromQuerySnapshot` method like a normal query.
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+    ```ts
+    import { collection, getFirestore, onSnapshot } from "firebase/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    // highlight-start
+    onSnapshot(collection(getFirestore(), "city"), async (snaphot) => {
+      const cities = await new DocumentFactory(() => new City()).fromQuerySnapshot(snaphot)
+    })
+    // highlight-end
+    ```
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+    ```ts
+    import { getFirestore } from "firebase-admin/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    // highlight-start
+    getFirestore().collection("city").onSnapshot(async (snaphot) => {
+      const cities = await new DocumentFactory(() => new City()).fromQuerySnapshot(snaphot)
+    })
+    // highlight-end
+    ```
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+    ```ts
+    import firestore from "@react-native-firebase/firestore"
+    import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+    // highlight-start
+    firestore.collection("city").onSnapshot(async (snaphot) => {
+      const cities = await new DocumentFactory(() => new City()).fromQuerySnapshot(snaphot)
+    })
+    // highlight-end
+    ```
+  </TabItem>
+</Tabs>
+
+
+## Firebase Functions document trigger
+
+When working with Firebase Functions Firestore triggers you can use the `fromSnapshot` method provided by a `DocumentFactory` to read the document with the trigger context data.
+This works for both the `before` and `after` document data information.
+
+```ts
+import { onDocumentWritten } from "firebase-functions/v2/firestore"
+import { DocumentFactory } from "@janwuesten/firebase-typescript"
+
+export const onCityWritten = onDocumentWritten({
+  document: "/city/{cityID}"
+}, async (context) => {
+  // highlight-start
+  const after = context.data?.after ? await new DocumentFactory(() => new City()).fromSnapshot(context.data.after) : null
+  const before = context.data?.before ? await new DocumentFactory(() => new City()).fromSnapshot(context.data.before) : null
+  // highlight-end
+})
+```

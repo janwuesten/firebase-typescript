@@ -1,117 +1,119 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
+import {themes as prismThemes} from "prism-react-renderer"
+import type {Config} from "@docusaurus/types"
+import type * as Preset from "@docusaurus/preset-classic"
 
 const config: Config = {
-  title: 'Firebase Typescript Docs',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
-
-  // Set the production url of your site here
-  url: 'https://your-docusaurus-site.example.com',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
-
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
-
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
+  title: "Firebase Typescript",
+  tagline: "Easily define and structure your Firebase Firestore database project with TypeScript classes.",
+  favicon: "img/favicon.ico",
+  url: "https://your-docusaurus-site.example.com",
+  baseUrl: "/",
+  organizationName: "janwuesten",
+  projectName: "firebase-typescript",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
-
   presets: [
     [
-      'classic',
+      "classic",
       {
         docs: {
-          sidebarPath: './sidebars.ts'
+          sidebarPath: "./sidebars.ts"
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
       } satisfies Preset.Options,
     ],
   ],
-
   themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: "img/docusaurus-social-card.jpg",
     navbar: {
-      title: 'Firebase Typescript',
+      title: "Firebase Typescript",
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: "My Site Logo",
+        src: "img/logo.svg",
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'docsSidebar',
-          position: 'left',
-          label: 'Docs',
+          type: "docSidebar",
+          sidebarId: "docsSidebar",
+          position: "left",
+          label: "Docs",
         },
         {
-          href: 'https://github.com/facebook/docusaurus',
-          label: 'GitHub',
-          position: 'right',
+          href: "https://github.com/janwuesten/firebase-typescript",
+          label: "GitHub",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "light",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: "Introduction",
+              to: "/docs/intro",
+            },
+            {
+              label: "Installation",
+              to: "/docs/getting-started/installation",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Support & Information",
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
+              label: "Issues",
+              href: "https://github.com/janwuesten/firebase-typescript/issues",
             },
             {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
-            },
+              label: "Security Policy",
+              href: "https://github.com/janwuesten/firebase-typescript/security/policy",
+            }
           ],
         },
         {
-          title: 'More',
+          title: "References",
           items: [
             {
-              label: 'GitHub',
-              href: 'https://github.com/janwuesten/firebase-typescript',
+              label: "GitHub",
+              href: "https://github.com/janwuesten/firebase-typescript",
             },
+            {
+              label: "NPM",
+              href: "https://www.npmjs.com/package/@janwuesten/firebase-typescript",
+            }
+          ],
+        },
+        {
+          title: "More",
+          items: [
+            {
+              label: "About me",
+              href: "https://prevoid.eu/about",
+            },
+            {
+              label: "Imprint",
+              href: "https://prevoid.eu/legal/imprint",
+            }
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Jan Wüsten<br>Built with Docusaurus`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
-};
+}
 
-export default config;
+export default config
