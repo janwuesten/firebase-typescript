@@ -102,7 +102,7 @@ export abstract class DocumentClass extends DocumentParser {
     if (typeof doc.exists == "function" ? !doc.exists() : !doc.exists) {
       return false
     }
-    await this.fromData(doc.data()!)
+    await this.fromData(doc.data() ?? {})
     return true
   }
 
@@ -117,5 +117,46 @@ export abstract class DocumentClass extends DocumentParser {
       throw new Error("collection not defined. Define with defineCollection()")
     }
     return this._collectionDefinition()
+  }
+  
+  withTransaction(transaction: any) {
+    const _self = this
+    return {
+      async get(): Promise<boolean>  {
+        if (!_self.__handlerDefinition || !_self.__handlerDefinition.transactionGet) {
+          throw new Error("transaction handler not defined. Define with defineHandler()")
+        }
+        const doc = await _self.__handlerDefinition.transactionGet(transaction, _self.ref)
+        if (typeof doc.exists == "function" ? !doc.exists() : !doc.exists) {
+          return false
+        }
+        await _self.fromData(doc.data() ?? {})
+        return true
+      },
+      delete<T>(): T {
+        if (!_self.__handlerDefinition || !_self.__handlerDefinition.transactionDelete) {
+          throw new Error("transaction handler not defined. Define with defineHandler()")
+        }
+        return _self.__handlerDefinition.transactionDelete(transaction, _self.ref)
+      },
+      async create<T>(): Promise<T> {
+        if (!_self.__handlerDefinition || !_self.__handlerDefinition.transactionCreate) {
+          throw new Error("transaction handler not defined. Define with defineHandler()")
+        }
+        return _self.__handlerDefinition.transactionCreate(transaction, _self.ref, await _self.toData())
+      },
+      async set<T>(options: SetOptions = {}): Promise<T> {
+        if (!_self.__handlerDefinition || !_self.__handlerDefinition.transactionSet) {
+          throw new Error("transaction handler not defined. Define with defineHandler()")
+        }
+        return _self.__handlerDefinition.transactionSet(transaction, _self.ref, await _self.toData(), options)
+      },
+      async update<T>(): Promise<T> {
+        if (!_self.__handlerDefinition || !_self.__handlerDefinition.transactionUpdate) {
+          throw new Error("transaction handler not defined. Define with defineHandler()")
+        }
+        return _self.__handlerDefinition.transactionUpdate(transaction, _self.ref, await _self.toData())
+      }
+    }
   }
 }
