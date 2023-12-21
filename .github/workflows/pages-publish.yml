@@ -24,7 +24,7 @@ jobs:
         run: npm run build
         working-directory: docs
       - name: Archive artifact
-        run: tar --dereference --hard-dereference --directory=build -cvf artifact.tar
+        run: tar -cvf artifact.tar build --dereference --hard-dereference
         working-directory: docs
       - name: Upload artifact
         id: upload-artifact
