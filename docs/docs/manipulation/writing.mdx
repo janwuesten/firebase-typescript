@@ -1,0 +1,58 @@
+---
+sidebar_position: 2
+---
+
+# Writing documents
+
+## Adding documents
+
+Adding documents can be done by simply using the `add` method. This will generate an ID and will add the ID to the existing `DocumentClass` reference.
+
+```ts
+const myNewCity = new City()
+await myNewCity.add()
+console.log(`new created document id is ${myNewCity.id}`)
+```
+
+## Setting documents
+
+Setting documents is a bit more complex than adding documents.
+If no ID is provided, the `set` method will add a new document and update the ID similar to the `add` method.
+If a ID is provided, the `set` method will set the document with the given ID, replacing the existing document but not failing when the document does not exist.
+When adding `merge: true` as a set option, the document is either merged with the existing document, or created using the provided ID.
+You can [read more information about set in the official documentation](https://firebase.google.com/docs/firestore/manage-data/add-data?hl=de#set_a_document) if you need to.
+
+```ts
+// Without an ID (create document)
+const myNewCity = new City()
+await myNewCity.set()
+console.log(`new created document id is ${myNewCity.id}`)
+
+// With an ID (replacing document)
+const myCity = new City("my-document-id")
+await myCity.set()
+
+// With an ID (merging document)
+const myCity = new City("my-document-id")
+await myCity.set({ merge: true })
+```
+
+## Updating documents
+
+Updating documents can be done by using the `update` method and is the recommended way of updating document that you know exist. Keep in mind that `update` will fail if the document does not exist. If you don't know if the document exists you should probably use `set` with the `merge: true` option instead.
+
+```ts
+const myCity = new City("my-document-id")
+if (myCity.get()) {
+  await myCity.update()
+}
+```
+
+## Deleting documents
+
+Deleting documents can be done by using the `delete` method. Note that the method will fail if no document ID is provided.
+
+```ts
+const myCity = new City("my-document-id")
+await myCity.delete()
+```

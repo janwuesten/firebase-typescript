@@ -1,0 +1,334 @@
+---
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs"
+import TabItem from "@theme/TabItem"
+
+# Basic document class
+
+## Creating basic document class
+
+### Creating class
+To create a basic document class, you need to create a class extending `DocumentClass`. You can't directly create a instance of `DocumentClass`.
+
+You need to implement the method `definition` to define your document class.
+The `definition` method contains all information for your document class - like which fields you document contains, which collection it is stored in and which [document handler](/docs/getting-started/handlers) is used.
+
+```ts title="classes/City.ts"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // Define your document class here
+  }
+}
+```
+
+### Defining class props
+
+First, define which props your document contains. Use the `!` operator to tell TypeScript that you do not set any default values.
+The default values should be set using the `definition` method in the next step.
+Note that the `definition` method is always called by the class constructor and so is safe that the default value you set later will always be used.
+
+
+```ts title="classes/City.ts"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  // highlight-start
+  name!: string
+  country!: string
+  capital!: boolean
+  population!: number
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // Define your document class here
+  }
+}
+```
+
+
+### Define Firestore fields
+
+Then you need to define each prop and its type for the serialization and deserialization of the Firebase Firestore document and the Firebase TypeScript class with the `define` method inside the class `definition`.
+
+You do not to define each prop, but each prop not defined with `define` will be ignored and not stored inside your Firestore database.
+
+```ts title="classes/City.ts"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  name!: string
+  country!: string
+  capital!: boolean
+  population!: number
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define("name", "string", "default name")
+    define("country", "string", "default country")
+    define("capital", "boolean", false)
+    define("population", "number", 0)
+    // highlight-end
+  }
+}
+```
+:::danger
+While the default value parameter is optional, you should always define a default value to ensure that every prop has a defined state. If no default value is set, `null` will be used. The setting of a default value will be forced in a future release.
+:::
+
+### Define collection
+
+The next step is to define the Firestore collection used by the document class with the `defineCollection` method.
+Note that the `defineCollection` takes an method returning the collection reference instead of directly inserting the collection name as a string to support subcollections as described later in the documentation.
+
+This is the only step that is different depending on the used Firebase SDK as the way a collection reference is created is different for each SDK.
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+    ```ts title="classes/City.ts"
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    // highlight-start
+    import { getFirestore, collection } from "firebase/firestore"
+    // highlight-end
+
+    export class City extends DocumentClass {
+      name!: string
+      country!: string
+      capital!: boolean
+      population!: number
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        define("name", "string", "default name")
+        define("country", "string", "default country")
+        define("capital", "boolean", false)
+        define("population", "number", 0)
+
+        // highlight-start
+        defineCollection(() => collection(getFirestore(), "city"))
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+    ```ts title="classes/City.ts"
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    // highlight-start
+    import { getFirestore } from "firebase-admin/firestore"
+    // highlight-end
+
+    export class City extends DocumentClass {
+      name!: string
+      country!: string
+      capital!: boolean
+      population!: number
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        define("name", "string", "default name")
+        define("country", "string", "default country")
+        define("capital", "boolean", false)
+        define("population", "number", 0)
+
+        // highlight-start
+        defineCollection(() => getFirestore().collection("city"))
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+    ```ts title="classes/City.ts"
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    // highlight-start
+    import firestore from "@react-native-firebase/firestore"
+    // highlight-end
+
+    export class City extends DocumentClass {
+      name!: string
+      country!: string
+      capital!: boolean
+      population!: number
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        define("name", "string", "default name")
+        define("country", "string", "default country")
+        define("capital", "boolean", false)
+        define("population", "number", 0)
+
+        // highlight-start
+        defineCollection(() => firestore().collection("city"))
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### Define document handler
+
+In order for your document class to function, you need to define the right [document handler](/docs/getting-started/handlers) inside your `definition` method with the `defineHandler` method.
+This will define the Firebase SDK used by this class.
+
+<Tabs>
+  <TabItem value="web" label="Web SDK" default>
+    ```ts title="classes/City.ts"
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    import { getFirestore, collection } from "firebase/firestore"
+    // highlight-start
+    import { DocumentHandler } from "./DocumentHandler.ts"
+    // highlight-end
+
+    export class City extends DocumentClass {
+      name!: string
+      country!: string
+      capital!: boolean
+      population!: number
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        define("name", "string", "default name")
+        define("country", "string", "default country")
+        define("capital", "boolean", false)
+        define("population", "number", 0)
+
+        defineCollection(() => collection(getFirestore(), "city"))
+        // highlight-start
+        defineHandler(new DocumentHandler())
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="admin" label="Admin SDK">
+    ```ts title="classes/City.ts"
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    import { getFirestore } from "firebase-admin/firestore"
+    // highlight-start
+    import { DocumentHandler } from "./DocumentHandler.ts"
+    // highlight-end
+
+    export class City extends DocumentClass {
+      name!: string
+      country!: string
+      capital!: boolean
+      population!: number
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        define("name", "string", "default name")
+        define("country", "string", "default country")
+        define("capital", "boolean", false)
+        define("population", "number", 0)
+
+        defineCollection(() => getFirestore().collection("city"))
+        // highlight-start
+        defineHandler(new DocumentHandler())
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+  <TabItem value="react-native" label="React Native SDK">
+    ```ts title="classes/City.ts"
+    import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+    import firestore from "@react-native-firebase/firestore"
+    // highlight-start
+    import { DocumentHandler } from "./DocumentHandler.ts"
+    // highlight-end
+
+    export class City extends DocumentClass {
+      name!: string
+      country!: string
+      capital!: boolean
+      population!: number
+
+      definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+        define("name", "string", "default name")
+        define("country", "string", "default country")
+        define("capital", "boolean", false)
+        define("population", "number", 0)
+
+        defineCollection(() => firestore().collection("city"))
+        // highlight-start
+        defineHandler(new DocumentHandler())
+        // highlight-end
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+This is now the final document class than can be used to get, set, update and delete documents from the Firestore.
+
+## Optional values
+
+Not all props are required - this is one of the big advantages of a NoSQL Database like Firestore. Optional values are however a bit annoying when using TypeScript as every class and prop should have a defined type.
+
+This is why Firebase TypeScript uses `null` for optional props. To declare a prop as optional, simply allow `null` as a valid value for this prop.
+You do not need to worry about the `define` method - optional props are detected automatically and are set to `null` by default.
+
+```ts title="classes/City.ts"
+export class City extends DocumentClass {
+  /* ... */
+  // highlight-start
+  optionalValue!: string | null
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    /* ... */
+
+    // highlight-start
+    define("population", "string", null)
+    // highlight-end
+
+    /* ... */
+  }
+}
+```
+
+## Default values
+
+When fields aren't set inside your Firestore database, `null` will be used instead as a value.
+To ensure that every prop has a default value you should always set a default value.
+
+To ensure your default values are always the right type, you can optionally define props using the type of the prop.
+
+```ts title="classes/City.ts"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  name!: string
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.name>("name", "string", "default name")
+    // highlight-end
+  }
+}
+```
+:::tip
+Although defining your props with `typeof` takes a bit more effort it increases type safety and is recommended.
+:::
+
+## Readonly values
+
+Sometimes props should only be read from the Firestore but not be changable.
+This can be done by defining the prop with `readonly()`.
+
+```ts title="classes/City.ts"
+import { DocumentClass, DocumentClassDefineProps } from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  readonlyProp!: string
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    // highlight-start
+    define<typeof this.readonlyProp>("readonlyProp", "string", "").readonly()
+    // highlight-end
+  }
+}
+```
+:::warning
+Always keep in mind to create Firestore rules to prevent changing the field if changing a field is not permitted for users. The `readonly` definition is only client side and should not be considered safe.
+:::

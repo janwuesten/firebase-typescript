@@ -1,0 +1,84 @@
+---
+sidebar_position: 2
+---
+
+# Document Map
+
+## Create document map
+
+If you need to create a map you can create a document class defining the properties of the map
+A document class is similar to a document class, but without the possibility of defining a collection and usage of database relevant methods like `update` and `set`.
+
+To create a document map create a class that extends `DocumentMap` and implements its `definition` method.
+
+```ts
+import {
+  DocumentMap,
+  DocumentMapDefineProps
+} from "@janwuesten/firebase-typescript"
+
+export class Mayor extends DocumentMap {
+  firstName!: string
+  lastName!: string
+  electionDate!: Date
+
+  definition({ define }: DocumentMapDefineProps) {
+    define<typeof this.firstName>("firstName", "string", "")
+    define<typeof this.lastName>("lastName", "string", "")
+    define<typeof this.electionDate>("electionDate", "timestamp", new Date())
+  }
+}
+```
+
+You need to create a prop on the document class with the type of your `DocumentMap` and define the prop with the type `map`.
+
+You also need to define the type of your `DocumentMap` with the `defineMap` method.
+The `defineMap` method is used to construct your `DocumentMap`.
+
+```ts
+import {
+  DocumentClass,
+  DocumentClassDefineProps,
+  DocumentMap,
+  DocumentMapDefineProps
+} from "@janwuesten/firebase-typescript"
+
+export class City extends DocumentClass {
+  name!: string
+  country!: string
+  capital!: boolean
+  population!: number
+  // highlight-start
+  mayor!: Mayor
+  // highlight-end
+
+  definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps) {
+    define<typeof this.name>("name", "string", "default name")
+    define<typeof this.country>("country", "string", "default country")
+    define<typeof this.capital>("capital", "boolean", false)
+    define<typeof this.population>("population", "number", 0)
+    // highlight-start
+    define<typeof this.mayor>("mayor", "map", new Mayor()).defineMap(() => new Mayor())
+    // highlight-end
+  }
+}
+
+
+export class Mayor extends DocumentMap {
+  firstName!: string
+  lastName!: string
+  electionDate!: Date
+
+  definition({ define }: DocumentMapDefineProps) {
+    define<typeof this.firstName>("firstName", "string", "")
+    define<typeof this.lastName>("lastName", "string", "")
+    define<typeof this.electionDate>("electionDate", "timestamp", new Date())
+  }
+}
+```
+
+## Nesting document maps
+
+You can create `DocumentMap`s inside other `DocumentMap`s without limitation.
+Keep in mind that too much nesting hurt performance and decreases readabillity so you should try to only nest a maximum amount of 3 levels.
+

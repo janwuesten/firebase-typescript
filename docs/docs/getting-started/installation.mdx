@@ -1,0 +1,55 @@
+---
+sidebar_position: 1
+---
+
+# Installation
+
+:::note
+Before using Firebase TypeScript you should be familiar with the core concepts of Firebase and Firestore and ideally already used Firebase before.
+If you do not know the core concepts of Firebase and how Firebase works, please consider reading the official docs [here](https://firebase.google.com/docs) before starting with Firebase TypeScript.
+
+However this doesn't mean that you can't start building your first project using Firebase TypeScript as the core concepts of Firebase TypeScript are easy to understand.
+:::
+
+## Install for Web
+
+First, install the official Firebase for Web SDK according to the Firebase docs [here](https://firebase.google.com/docs/web/setup).
+
+Then install the Firebase TypeScript package `@janwuesten/firebase-typescript` to your web project.
+
+`npm i @janwuesten/firebase-typescript`
+
+## Install for your Server
+
+First, install the official Firebase Admin SDK according to the Firebase docs [here](https://firebase.google.com/docs/admin/setup).
+
+Then install the Firebase TypeScript package `@janwuesten/firebase-typescript` to your web project.
+
+`npm i @janwuesten/firebase-typescript`
+
+## Install for React Native
+
+Install the React Native Firebase SDK made by Invertase according to its documentation [here](https://rnfirebase.io/).
+Firebase TypeScript requires the installation of the core React Native Firebase SDK as well as the React Native Firestore SDK.
+
+Then install the Firebase TypeScript package `@janwuesten/firebase-typescript` to your web project.
+
+`npm i @janwuesten/firebase-typescript`
+
+:::tip
+If you have Metro running we recommend starting metro with cleared cache with `react-native start --reset-cache` or `npm start -- --reset-cache` to minimize errors due to the cache.
+:::
+
+## Supported SDK versions
+
+Due to the way Firebase TypeScript is developed, every version of the Firebase SDKs (older, current and future) versions should work without problems.
+However this doesn't mean every version is officially supported by us. If you use unsupported versions some features may not work and you will not receive support by us.
+
+| SDK | Version | Status | Info |
+| -- | -- | -- | -- |
+| firebase | >= 11.0.x | Supported |
+| firebase | < 11.0.x | Unsupported |
+| firebase-admin | >= 9.0.x | Supported |
+| firebase-admin | < 9.0.x | Unsupported |
+| firebase-admin | >= 9.0.x | Supported |
+| firebase-admin | < 9.0.x | Unsupported |

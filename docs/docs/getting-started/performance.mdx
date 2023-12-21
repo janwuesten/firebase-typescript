@@ -1,0 +1,55 @@
+---
+sidebar_position: 3
+---
+
+# Performance
+
+Using Firebase TypeScript will obviously make a small performance impact.
+This is why we made a small information about when to use Firebase TypeScript and when to better not use it as well as some metrics to let you decide better.
+
+## When to use Firebase TypeScript
+
+Firebase TypeScript is perfect if you want a consistent, readable, maintainable and shareable class pattern to use with your Firestore database.
+As the Firestore database does not provide any scheme your code is the only instance defining your scheme.
+So using this sort of class pattern is useful to reduce bugs and improve your product stability for the end user.
+
+## When not to use Firebase TypeScript
+
+As Firebase TypeScript has some performance impact especially when using a huge amount of class documents at the same time
+using it in heavy tasks that are reading or writing heavy amount of documents (> 10000 or more) isn't ideal.
+
+Firebase TypeScript is also not ideal for applications where every 0,01ms counts - for example in Games.
+
+## Performance metrics
+
+To provide some data, we have compared "native performance" (using plain JavaScript Objects) with the usage of `DocumentClass`.
+The `DocumentClass` included one `DocumentMap`.
+
+- **Native / no classes:** this tests used no class model at all. You need to consider that you probably want to use classes and create a manual serialization that may slow down execution time.
+- **DocumentClass write**: this tests tested the latency added when writing your document to the Firestore database.
+- **DocumentClass read**: this tests tested the latency added when reading your document from the Firestore database.
+- **DocumentClass async write**: this tests tested the latency added when editing your document locally, displaying it to the user and writing your document to the Firestore database after displayed to the user.
+- **DocumentClass async read**: this tests tested the latency added when knowing the document exist, displaying the default values to the user and then reading the document class information from the firestore. Note that this is a scenario you would probably not find in most applications.
+
+:::note
+Keep in mind that the result vary depending on the system, class structure and other factors.
+Those performance impacts are only for writing and reading documents and not for working with the documents.
+:::
+
+| Test | Runs | Average time | Total time |
+|--|--|--|--|
+| Native / no classes | 1 | < 1ms | < 1ms |
+| `DocumentClass` write | 1 | < 1ms | < 1ms |
+| `DocumentClass` read | 1 | < 1ms | < 1ms |
+| Native / no classes | 100 | 1ms | 0.001ms |
+| `DocumentClass` write | 100 | 1ms | 0.001ms |
+| `DocumentClass` read | 100 | 1ms | 0.001ms |
+| Native / no classes | 1000 | 0.001ms | 1ms |
+| `DocumentClass` write | 1000 | 0.003ms | 3ms |
+| `DocumentClass` read | 1000 | 0.011ms | 11ms |
+| `DocumentClass` async write | 1000 | 0.002ms | 3ms |
+| `DocumentClass` async read | 1000 | 0.002ms | 11ms |
+
+:::info
+In a future release we plan to provide a `LightweightDocumentClass` and `LightweightDocumentMap` with less features than `DocumentClass` and `DocumentMap` but near native performance.
+:::
