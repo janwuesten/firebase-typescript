@@ -7,7 +7,7 @@ const config: Config = {
   tagline: "Easily define and structure your Firebase Firestore database project with TypeScript classes.",
   favicon: "img/favicon.ico",
   url: "https://your-docusaurus-site.example.com",
-  baseUrl: "/",
+  baseUrl: "/firebase-typescript/",
   organizationName: "janwuesten",
   projectName: "firebase-typescript",
   onBrokenLinks: "throw",
