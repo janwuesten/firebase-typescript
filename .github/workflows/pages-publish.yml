@@ -24,9 +24,7 @@ jobs:
         run: npm run build
         working-directory: docs
       - name: Archive artifact
-        run: |
-          ls -la
-          tar --dereference --hard-dereference --directory build -cvf "$RUNNER_TEMP/artifact.tar" --exclude=.git --exclude=.github
+        run: tar --dereference --hard-dereference --directory=build -cvf "$RUNNER_TEMP/artifact.tar" --exclude=.git --exclude=.github
         env:
           RUNNER_TEMP: ${{ runner.temp }}
         working-directory: docs
