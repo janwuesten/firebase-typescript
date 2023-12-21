@@ -34,16 +34,11 @@ jobs:
       - name: Build docs
         run: npm run build
         working-directory: docs
-      - name: Archive artifact
-        run: tar -cvf artifact.tar build --dereference --hard-dereference
-        working-directory: docs
       - name: Upload artifact
         id: upload-artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          name: github-pages
-          path: docs/artifact.tar
-          retention-days: 1
+          path: docs/build
   deploy:
     environment:
       name: github-pages
