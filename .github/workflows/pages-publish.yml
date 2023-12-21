@@ -24,15 +24,13 @@ jobs:
         run: npm run build
         working-directory: docs
       - name: Archive artifact
-        run: tar --dereference --hard-dereference --directory=build -cvf "$RUNNER_TEMP/artifact.tar" --exclude=.git --exclude=.github
-        env:
-          RUNNER_TEMP: ${{ runner.temp }}
+        run: tar --dereference --hard-dereference --directory=build -cvf artifact.tar
         working-directory: docs
       - name: Upload artifact
         id: upload-artifact
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
-          path: ${{ runner.temp }}/artifact.tar
+          path: docs/artifact.tar
           retention-days: 1
           if-no-files-found: error
