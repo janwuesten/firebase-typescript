@@ -19,7 +19,7 @@ This installation method support firebase for web, firebase admin and firebase f
 `npm install @janwuesten/firebase-typescript`
 
 Keep in mind that you still need to install the firebase sdk for that environment.
-[You can see more information in the Wiki](https://github.com/janwuesten/firebase-typescript/wiki/1.-Getting-started).
+[You can see more information in the Wiki](https://janwuesten.github.io/firebase-typescript/docs/getting-started/installation).
 
 ## Basic usage example
 ```ts
@@ -43,7 +43,7 @@ export class Account extends DocumentClass {
         // Define the document class handler to set which firebase app is used
         // and if this class if for web, admin or react native
         // you can see example handlers for web, admin and react native in the wiki:
-        // https://github.com/janwuesten/firebase-typescript/wiki/2.1-%5BFirestore%5D-Create-document-class-handlers-and-batch-handlers
+        // https://janwuesten.github.io/firebase-typescript/docs/getting-started/handlers
         defineHandler(new MyClassHandler())
     }
 }
@@ -85,4 +85,4 @@ const account = new Account("document id")
 await account.delete()
 ```
 
-For more information on how to use firebase-typescript with all its features visit the [documentation on GitHub Wiki here](https://github.com/janwuesten/firebase-typescript/wiki).
+For more information on how to use firebase-typescript with all its features visit the [documentation](https://janwuesten.github.io/firebase-typescript/docs/intro).
