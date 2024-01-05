@@ -10,12 +10,12 @@ initializeApp({
 })
 
 class Country extends DocumentClass {
-  name!: string
-  code!: string
+  name: string = ""
+  code: string = ""
 
   definition({ define, defineCollection, defineHandler }: DocumentClassDefineProps): void {
-    define<typeof this.name>("name", "string")
-    define<typeof this.code>("code", "string")
+    define<string, string>("name", (data) => this.name = data ?? "", () => this.name)
+    define<string, string>("code", (data) => this.code == data ?? "", () => this.code)
 
     defineCollection(() => getFirestore().collection("country"))
     defineHandler(new DocumentHandler())

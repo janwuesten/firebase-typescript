@@ -1,6 +1,6 @@
 import { DocumentMap } from "./DocumentMap"
-import { DocumentData, FieldType } from "../types/DocumentTypes"
-import { EventDefineCallback } from "../types/DefineTypes"
+import { DocumentData } from "../types/DocumentTypes"
+import { DocumentParserDefinitionGetter, DocumentParserDefinitionSetter, EventDefineCallback } from "../types/DefineTypes"
 import { Mappable } from "./Mappable"
 
 export class DocumentParserListener {
@@ -12,61 +12,29 @@ export class DocumentParserListener {
     this.listener = listener
   }
 }
-export class DocumentParserDefinition<T> {
-  private __field: string
-  private __remoteField: string
-  private __type: FieldType
-  private __defaultValue: (() => T) | T | null = null
-  private __defineMap: ((data: DocumentData) => DocumentMap) | null = null
-  private __readonly: boolean = false
+export class DocumentParserDefinition<A, B> {
+  private __propertieName: string
+  private __getter: DocumentParserDefinitionGetter<A>
+  private __setter: DocumentParserDefinitionSetter<B>
 
-  get _field() {
-    return this.__field
+  constructor(propertieName: string, getter: DocumentParserDefinitionGetter<A>, setter: DocumentParserDefinitionSetter<B>) {
+    this.__getter = getter
+    this.__setter = setter
+    this.__propertieName = propertieName
   }
-  get _remoteField() {
-    return this.__remoteField
+  
+  get _propertieName() {
+    return this.__propertieName
   }
-  get _type() {
-    return this.__type
+  get _getter() {
+    return this.__getter
   }
-  get _defaultValue() {
-    return this.__defaultValue
-  }
-  get _defineMap() {
-    return this.__defineMap
-  }
-  get _readonly() {
-    return this.__readonly
-  }
-
-  constructor(prop: string, fieldType: FieldType, defaultValue?: T) {
-    this.__field = prop
-    this.__remoteField = prop
-    this.__type = fieldType
-    if (defaultValue != undefined) {
-      this.__defaultValue = defaultValue
-    }
-  }
-
-  defaultValue(defaultValue: T) {
-    this.__defaultValue = defaultValue
-    return this
-  }
-  remoteField(field: string) {
-    this.__remoteField = field
-    return this
-  }
-  defineMap(definer: (data: DocumentData) => DocumentMap) {
-    this.__defineMap = definer
-    return this
-  }
-  readonly() {
-    this.__readonly = true
-    return this
+  get _setter() {
+    return this.__setter
   }
 }
 export abstract class DocumentParser {
-  protected _definitions: DocumentParserDefinition<any>[] = []
+  protected _definitions: DocumentParserDefinition<any, any>[] = []
   protected _listeners: DocumentParserListener[] = []
 
   constructor() {
@@ -144,55 +112,17 @@ export abstract class DocumentParser {
   }
 
   async fromData(data: DocumentData) {
-    const self = this as any
     const beforeReadListeners = this._listeners.filter((a) => a.event == "beforeRead")
     await Promise.all(beforeReadListeners.map(async (listener) => {
       await listener.listener()
     }))
-    for (const definition of this._definitions) {
-      if (data == null || !(definition._remoteField in data) || data[definition._remoteField] == null) {
-        const _defaultValue = definition._defaultValue
-        if (typeof _defaultValue == "function") {
-          self[definition._field] = _defaultValue()
-        } else {
-          self[definition._field] = _defaultValue
-        }
+    await Promise.all(this._definitions.map(async (definition) => {
+      if (definition._propertieName in data) {
+        await definition._getter(data[definition._propertieName])
       } else {
-        switch (definition._type) {
-          case "timestamp":
-            if (typeof data[definition._remoteField] === "object" && typeof data[definition._remoteField].toDate == "function") {
-              self[definition._field] = data[definition._remoteField].toDate()
-            } else {
-              throw new Error(`field ${definition._field} is not a timestamp`)
-            }
-            break
-          case "map":
-            if (!definition._defineMap) {
-              throw new Error(`map definition for field ${definition._field} missing. Define with .defineMap()`)
-            }
-            self[definition._field] = await definition._defineMap(data[definition._remoteField] as DocumentData).fromData(data[definition._remoteField] as DocumentData)
-            break
-          case "mapArray":
-            if (!definition._defineMap) {
-              throw new Error(`map definition for field ${definition._field} missing. Define with .defineMap()`)
-            }
-            self[definition._field] = await this.fromDocumentMapArray(data[definition._remoteField] as DocumentData[], definition._defineMap!)
-            break
-          case "mappable":
-            if (!definition._defineMap) {
-              throw new Error(`map definition for field ${definition._field} missing. Define with .defineMap()`)
-            }
-            self[definition._field] = await this.fromDocumentMapMappable(data[definition._remoteField] as DocumentData, definition._defineMap!)
-            break
-          case "simpleMappable":
-            self[definition._field] = await this.fromDocumentMapSimpleMappable(data[definition._remoteField] as DocumentData)
-            break
-          default:
-            self[definition._field] = data[definition._remoteField]
-            break
-        }
+        await definition._getter(null)
       }
-    }
+    }))
     const afterReadListeners = this._listeners.filter((a) => a.event == "afterRead")
     await Promise.all(afterReadListeners.map(async (listener) => {
       await listener.listener()
@@ -201,36 +131,13 @@ export abstract class DocumentParser {
   }
   async toData(): Promise<DocumentData> {
     const data: DocumentData = {}
-    const self = this as any
     const beforeWriteListeners = this._listeners.filter((a) => a.event == "beforeWrite")
     await Promise.all(beforeWriteListeners.map(async (listener) => {
       await listener.listener()
     }))
-    for (const definition of this._definitions) {
-      if (!definition._readonly) {
-        if (self[definition._field] == undefined || self[definition._field] == null) {
-          data[definition._remoteField] = null
-        } else {
-          switch (definition._type) {
-            case "map":
-              data[definition._remoteField] = await (self[definition._field] as DocumentMap).toData()
-              break
-            case "mapArray":
-              data[definition._remoteField] = await this.toDocumentMapArray(self[definition._field])
-              break
-            case "mappable":
-              data[definition._remoteField] = await this.toDocumentMapMappable(self[definition._field])
-              break
-            case "simpleMappable":
-              data[definition._remoteField] = await this.toDocumentMapSimpleMappable(self[definition._field])
-              break
-            default:
-              data[definition._remoteField] = self[definition._field]
-              break
-          }
-        }
-      }
-    }
+    await Promise.all(this._definitions.map(async (definition) => {
+      data[definition._propertieName] = await definition._setter()
+    }))
     const afterWriteListeners = this._listeners.filter((a) => a.event == "afterWrite")
     await Promise.all(afterWriteListeners.map(async (listener) => {
       await listener.listener()

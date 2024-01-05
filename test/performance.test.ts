@@ -10,7 +10,7 @@ class City extends DocumentClass {
   }
 
   definition({ define }: DocumentClassDefineProps): void {
-    define<typeof this.name>("name", "string")
+    define<string, string>("name", (data) => this.name = data ?? "", () => this.name)
   }
 }
 class Country extends DocumentClass {
@@ -19,9 +19,9 @@ class Country extends DocumentClass {
   cities!: City[]
 
   definition({ define }: DocumentClassDefineProps): void {
-    define<typeof this.name>("name", "string")
-    define<typeof this.code>("code", "string")
-    define<typeof this.cities>("cities", "mapArray", []).defineMap(() => new City(""))
+    define<string, string>("name", (data) => this.name = data ?? "", () => this.name)
+    define<string, string>("code", (data) => this.code == data ?? "", () => this.code)
+    define<any, City[]>("cities", (data) => this.cities = data ?? [], () => this.cities)
   }
 }
 
